@@ -6,7 +6,7 @@ var arr = [
 ];
     
 var newArr = arr.filter(function(item){
-    return item.name === "orange";
+    return item.name === "pear";
 });
 
 
