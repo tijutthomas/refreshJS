@@ -7,3 +7,4 @@ filter - The filter() method creates a new array with all elements that pass the
          
 forEach() - The forEach() method executes a provided function once per array element.
          Use Case: Iterate through an array
+       
