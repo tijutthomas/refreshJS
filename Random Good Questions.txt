@@ -1,0 +1,31 @@
+npm-shrinkwrap
+
+
+Docker - Lightweight, Fast and Simple when comes to deployment.
+Platform for building, shipping and deploying our application.
+
+Docker Core Components
+1. Docker Daemon --> Docker Engine runs on host machine.
+2. Docker Client --> CLI used to interact with Daemon.
+
+Linux --> Docker Client to Docker Daemon
+Windows or non linux --> Docker Client with boot2docker(Docker Host for providing a box of linux outside) --> Docker Daemon.
+
+Docker Workflow Components
+
+Docker Image --> (Template contains environment, application...)
+Docker Container --> Created from images - Start, Stop, move, delete
+Docker Registry/Docker Hub --> Public and private repositories used to store images.
+DockerFiles --> Automates image construction. Docker Files has instruction to create OS, Software, installations needed etc. and build image using DockerFile.
+
+From Docker REgistry get basic IMAGE using pull from Docker Hub, then run docker run on image gives --> Container. 
+On Container add application components and create image by commiting - V1 ---Push it to Docker Repository.
+
+Docker Repository ---pull--> Create Image --docker run-> Docker Container(+ Add Application stuff) --> Commit Docker image --Push--> Docker Repository.
+
+Docker File does all above steps. DockerFile build create image. We can tag images as well.
+
+Kubernette(Automate Docker Workflow) by google manages stuff like schedule, manage and deploying application components from container.
+
+
+Medallia --> http://collabedit.com/2d4g5

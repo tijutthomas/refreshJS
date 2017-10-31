@@ -1,0 +1,365 @@
+Closure
+-------
+
+var updateClickCount=(function(){
+    var counter=0;
+
+    return function(){
+     ++counter;
+     // do something with counter
+    }
+})();
+
+Suppose, you want to count the number of times user clicked a button on a webpage.
+For this, you are triggering a function on  onclick event of button to update the count of the variable
+
+<button onclick="updateClickCount()">click me</button>  
+Now there could be many approaches like:
+
+1) You could use a global variable, and a function to increase the counter:
+
+var counter = 0;
+
+function updateClickCount() {
+    ++counter;
+    // do something with counter
+}
+But, the pitfall is that any script on the page can change the counter, without calling updateClickCount().
+
+2) Now, You might be thinking of declaring the variable inside the function:
+
+function updateClickCount() {
+    var counter = 0;
+    ++counter;
+    // do something with counter
+}
+But, Hey! Every time updateClickCount() function is called, the counter is set to 1 again.
+
+3) Thinking about Nested functions?
+
+Nested functions have access to the scope "above" them.
+In this example, the inner function updateClickCount() has access to the counter variable in the parent function countWrapper()
+
+function countWrapper() {
+    var counter = 0;
+    function updateClickCount() {
+    ++counter;
+    // do something with counter
+    }
+    updateClickCount();    
+    return counter; 
+}
+This could have solved the counter dilemma, if you could reach the updateClickCount() function from the outside and you also need to find a way to execute counter = 0 only once not everytime.
+
+4) Closure to the rescue! (self-invoking function):
+
+ var updateClickCount=(function(){
+    var counter=0;
+
+    return function(){
+     ++counter;
+     // do something with counter
+    }
+})();
+The self-invoking function only runs once. It sets the counter to zero (0), and returns a function expression.
+This way updateClickCount becomes a function. The "wonderful" part is that it can access the counter in the parent scope.
+This is called a JavaScript closure. It makes it possible for a function to have "private" variables.
+The counter is protected by the scope of the anonymous function, and can only be changed using the add function!
+
+In the JavaScript (or any ECMAScript) language, in particular, closures are useful in hiding the implementation of functionality while still revealing the interface.
+For example, imagine you are writing a class of date utility methods and you want to allow users to lookup weekday names by index but you don't want them to be able to modify the array of names you use under the hood.
+
+var dateUtil = {
+  weekdayShort: (function() {
+    var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return function(x) {
+      if ((x != parseInt(x)) || (x < 1) || (x > 7)) {
+        throw new Error("invalid weekday number");
+      }
+      return days[x - 1];
+    };
+  }())
+};
+Note that the days array could simply be stored as a property of the dateUtil object but then it would be visible to users of the script and they could even change it if they wanted, without even needing your source code. However, 
+since it's enclosed by the anonymous function which returns the date lookup function it is only accessible by the lookup function so it is now tamper-proof.
+
+Question 4 - Codementor
+What is a “closure” in JavaScript? Provide an example
+
+A closure is a function defined inside another function (called the parent function), and has access to variables that are declared and defined in the parent function scope.
+
+The closure has access to variables in three scopes:
+
+Variables declared in their own scope
+Variables declared in a parent function scope
+Variables declared in the global namespace
+var globalVar = "abc"; 
+
+// Parent self invoking function 
+(function outerFunction (outerArg) { // begin of scope outerFunction
+    // Variable declared in outerFunction function scope 
+    var outerFuncVar = 'x';    
+    // Closure self-invoking function 
+    (function innerFunction (innerArg) { // begin of scope innerFunction
+        // variable declared in innerFunction function scope
+        var innerFuncVar = "y"; 
+        console.log(          
+            "outerArg = " + outerArg + "\n" +
+            "outerFuncVar = " + outerFuncVar + "\n" +
+            "innerArg = " + innerArg + "\n" +
+            "innerFuncVar = " + innerFuncVar + "\n" +
+            "globalVar = " + globalVar);
+ 
+    }// end of scope innerFunction)(5); // Pass 5 as parameter 
+}// end of scope outerFunction )(7); // Pass 7 as parameter 
+innerFunction is closure that is defined inside outerFunction and has access to all variables declared and defined in the outerFunction scope. In addition, the function defined inside another function as a closure will have access to variables declared in the global namespace.
+
+Thus, the output of the code above would be:
+
+outerArg = 7
+outerFuncVar = x
+innerArg = 5
+innerFuncVar = y
+globalVar = abc
+
+Question 3
+What is the drawback of creating true private methods in JavaScript?
+
+One of the drawbacks of creating true private methods in JavaScript is that they are very memory-inefficient, as a new copy of the method would be created for each instance.
+
+var Employee = function (name, company, salary) {
+    this.name = name || "";       //Public attribute default value is null
+    this.company = company || ""; //Public attribute default value is null
+    this.salary = salary || 5000; //Public attribute default value is null
+
+    // Private method
+    var increaseSalary = function () {
+        this.salary = this.salary + 1000;
+    };
+
+    // Public method
+    this.dispalyIncreasedSalary = function() {
+        increaseSlary();
+        console.log(this.salary);
+    };
+};
+
+// Create Employee class object
+var emp1 = new Employee("John","Pluto",3000);
+// Create Employee class object
+var emp2 = new Employee("Merry","Pluto",2000);
+// Create Employee class object
+var emp3 = new Employee("Ren","Pluto",2500);
+Here each instance variable emp1, emp2, emp3 has its own copy of the increaseSalary private method.
+
+So, as a recommendation, don’t use private methods unless it’s necessary.
+
+Promise
+-------
+Overview
+A Promise object represents a value that may not be available yet, but will be resolved at some point in the future. 
+It allows you to write asynchronous code in a more synchronous fashion. 
+For example, if you use the promise API to make an asynchronous call to a remote web service you will create a Promise object 
+which represents the data that will be returned by the web service in future. The caveat being that the actual data is not available yet. 
+It will become available when the request completes and a response comes back from the web service. 
+In the meantime the Promise object acts like a proxy to the actual data. 
+Furthermore, you can attach callbacks to the Promise object which will be called once the actual data is available.
+
+The API
+To get started, let’s examine the following code which creates a new Promise object.
+
+if (window.Promise) { // Check if the browser supports Promises
+  var promise = new Promise(function(resolve, reject) {
+    //asynchronous code goes here
+  });
+}
+We start by instantiating a new Promise object and passing it a callback function. The callback takes two arguments, resolve and reject, which are both functions. All your asynchronous code goes inside that callback. If everything is successful, the promise is fulfilled by calling resolve(). In case of an error, reject() is called with an Error object. This indicates that the promise is rejected.
+
+Now let’s build something simple which shows how promises are used. The following code makes an asynchronous request to a web service that returns a random joke in JSON format. Let’s examine how promises are used here.
+
+if (window.Promise) {
+  console.log('Promise found');
+
+  var promise = new Promise(function(resolve, reject) {
+    var request = new XMLHttpRequest();
+
+    request.open('GET', 'http://api.icndb.com/jokes/random');
+    request.onload = function() {
+      if (request.status == 200) {
+        resolve(request.response); // we got data here, so resolve the Promise
+      } else {
+        reject(Error(request.statusText)); // status is not 200 OK, so reject
+      }
+    };
+
+    request.onerror = function() {
+      reject(Error('Error fetching data.')); // error occurred, reject the  Promise
+    };
+
+    request.send(); //send the request
+  });
+
+  console.log('Asynchronous request made.');
+
+  promise.then(function(data) {
+    console.log('Got data! Promise fulfilled.');
+    document.getElementsByTagName('body')[0].textContent = JSON.parse(data).value.joke;
+  }, function(error) {
+    console.log('Promise rejected.');
+    console.log(error.message);
+  });
+} else {
+  console.log('Promise not available');
+}
+In the previous code, the Promise constructor callback contains the asynchronous code used to get data the from remote service. Here, we just create an Ajax request to http://api.icndb.com/jokes/random which returns a random joke. When a JSON response is received from the remote server, it is passed to resolve(). In case of any error, reject() is called with an Error object.
+
+When we instantiate a Promise object we get a proxy to the data that will be available in future. In our case we are expecting some data to be returned from the remote service at some point in future. So, how do we know when the data becomes available? This is where the Promise.then() function is used. This function takes two arguments: a success callback and a failure callback. These callbacks are called when the Promise is settled (i.e. either fulfilled or rejected). If the promise was fulfilled, the success callback will be fired with the actual data you passed to resolve(). If the promise was rejected, the failure callback will be called. Whatever you passed to reject() will be passed as an argument to this callback.
+
+Try this Plunkr example. Simply refresh the page to view a new random joke. Also, open up your browser console so that you can see the order in which the different parts of the code are executed. Note that a promise can have three states:
+
+pending (not fulfilled or rejected)
+fulfilled
+rejected
+The Promise.status property, which is code-inaccessible and private, gives information about these states. Once a promise is rejected or fulfilled, this status gets permanently associated with it. This means a promise can succeed or fail only once. If the promise has already been fulfilled and later you attach a then() to it with two callbacks, the success callback will be correctly called. So, in the world of promises, we are not interested in knowing when the promise is settled. We are only concerned with the final outcome of the promise.
+
+Chaining Promises
+It is sometimes desirable to chain promises together. For instance, you might have multiple asynchronous operations to be performed. When one operation gives you data, you will start doing some other operation on that piece of data and so on. Promises can be chained together as demonstrated in the following example.
+
+function getPromise(url) {
+  // return a Promise here
+  // send an async request to the url as a part of promise
+  // after getting the result, resolve the promise with it
+}
+
+var promise = getPromise('some url here');
+
+promise.then(function(result) {
+  //we have our result here
+  return getPromise(result); //return a promise here again
+}).then(function(result) {
+  //handle the final result
+});
+The tricky part is that when you return a simple value inside then(), the next then() is called with that return value. But if you return a promise inside then(), the next then() waits on it and gets called when that promise is settled.
+
+Handling Errors
+You already know the then() function takes two callbacks as arguments. The second one will be called if the promise was rejected. But, we also have a catch() function which can be used to handle promise rejection. Have a look at the following code:
+
+promise.then(function(result) {
+  console.log('Got data!', result);
+}).catch(function(error) {
+  console.log('Error occurred!', error);
+});
+This is equivalent to:
+
+promise.then(function(result) {
+  console.log('Got data!', result);
+}).then(undefined, function(error) {
+  console.log('Error occurred!', error);
+});
+Note that if the promise was rejected and then() does not have a failure callback, 
+the control will move forward to the next then() with a failure callback or the next catch(). Apart from explicit promise rejection, 
+catch() is also called when any exception is thrown from the Promise constructor callback. So, you can also use catch() for logging purposes. 
+Note that we could use try...catch to handle errors, 
+but that is not necessary with promises as any asynchronous or synchronous error is always caught by catch().
+
+Conclusion
+This was just a brief introduction to JavaScript’s new Promises API. Clearly it lets us write asynchronous code very easily. 
+We can proceed as usual without knowing what value is going to be returned from the asynchronous code in the future. 
+There is more to the API, which has not been covered here. 
+To learn more about Promises, browse the following resources, and stay tuned to SitePoint!
+
+Constructor
+-----------
+
+https://css-tricks.com/understanding-javascript-constructors/
+
+Object Literal Notations are Preferred to Constructors
+The JavaScript language has nine built-in constructors: Object(), Array(), String(), Number(), Boolean(), Date(), Function(), Error() and RegExp(). 
+When creating values we are free to use either object literals or constructors, but object literals are not only easier to read but also faster to run 
+because they can be optimize at parse time. Whenever we need simple objects it's best to stick with literals:
+
+// a number object
+// numbers have a toFixed() method
+var obj = new Object(5);
+obj.toFixed(2);     // 5.00
+
+// we can achieve the same result using literals
+var num = 5;
+num.toFixed(2);     // 5.00
+
+// a string object
+// strings have a slice() method 
+var obj = new String("text");
+obj.slice(0,2);     // "te"
+
+// same as above
+var string = "text";
+string.slice(0,2);  // "te"
+As you can see there's hardly any difference between these object literals and constructors and we can still call methods on literals. 
+It's because when we call a method on a literal, behind the scene JavaScript converts the literal to a temporary object so that 
+it's possible to use object methods for primitive values, then JavaScript discards the temporary object.
+
+function Book() { 
+  // unfinished code
+} 
+var myBook = new Book();
+The last line of the code creates an instance of Book and assigns it to a variable; even though the Book constructor doesn't do anything, 
+myBook is still an instance of it. As you can see there is no difference between this function and regular functions except that we call it with the new keyword and the function name is capitalized.
+
+#Determining the Type of an Instance
+To find out whether an object is an instance of another one, we use the instanceof operator:
+
+myBook instanceof Book    // true
+myBook instanceof String  // false
+Note that if the right side of the instanceof operator isn’t a function, it will throw an error:
+
+myBook instanceof {};
+// TypeError: invalid 'instanceof' operand ({})
+Another way to find the type of an instance is using the constructor property. All object instances have a constructor property that point to the constructor function that created it.
+
+Consider the following code fragment:
+
+myBook.constructor == Book;   // true
+Since the constructor property of myBook points to Book the result is true. All objects inherit a constructor property from their prototype:
+
+var s = new String("text");
+s.constructor === String;      // true
+"text".constructor === String; // true
+var o = new Object();
+o.constructor === Object;      // true
+var o = {};
+o.constructor === Object;      // true
+var a = new Array();
+a.constructor === Array;       // true
+[].constructor === Array;      // true
+
+Object.defineProperty Function
+The Object.defineProperty() can be used inside of a constructor to help perform all necessary property setup. Consider the following constructor:
+
+function Book(name) { 
+  Object.defineProperty(this, "name", { 
+      get: function() { 
+        return "Book: " + name;       
+      },        
+      set: function(newName) {            
+        name = newName;        
+      },               
+      configurable: false     
+   }); 
+}
+
+var myBook = new Book("Single Page Web Applications");
+console.log(myBook.name);    // Book: Single Page Web Applications
+
+// we cannot delete the name property because "configurable" is set to false
+delete myBook.name;    
+console.log(myBook.name);    // Book: Single Page Web Applications
+
+// but we can change the value of the name property
+myBook.name = "Testable JavaScript";
+console.log(myBook.name);    // Book: Testable JavaScript
+In this code we used accessor properties inside the Object.defineProperty(). Accessor properties don’t include any properties or methods, but they define a getter to call when the property is read, and a setter to call when the property is written to.
+
+A getter is expected to return a value, while a setter receives the value being assigned to the property as an argument. This constructor allows us to set or change the name property of instances, but we are not allowed to delete it, and when we get the value of name, the getter prepends the string "Book: " to the name and returns it.
+
+250403

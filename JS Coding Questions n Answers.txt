@@ -1,0 +1,90 @@
+Check braces closed or not.
+
+'use strict';
+function braces(values) {
+  var i;
+  var result = [];
+  var len = values.length;
+
+  for (i = 0; i < len; i++) {
+
+    if (isBalanced(values[i])) {
+      result.push('YES');
+    } else {
+      result.push('NO');
+    }
+  }
+  return result;
+}
+
+function isBalanced(str) {
+  var i, ch, expectedBracket;
+  var temp = [];
+  var len = str.length;
+
+  var openingBrackets = ['[', '{', '('];
+  var closingBrackets = [']', '}', ')'];
+
+  for (i = 0; i < len; i++) {
+    ch = str[i];
+
+    if (openingBrackets.indexOf(ch) > -1) {
+      temp.push(ch);
+    } else if (closingBrackets.indexOf(ch) > -1) {
+
+      expectedBracket = openingBrackets[closingBrackets.indexOf(ch)];
+      if (temp.length === 0 || (temp.pop() !== expectedBracket)) {
+        return false;
+      }
+
+    } else {
+      // Ignore the characters which do not match valid Brackets symbol
+      continue;
+    }
+  }
+
+  return (temp.length === 0);
+}
+
+var i1 = [
+  "{}[]()",
+  "{[}]"
+];
+
+var i2 = [
+  "{[}]",
+  "[{()()}({[]})]({}[({})])((((((()[])){}))[]{{{({({({{{{{{}}}}}})})})}}}))[][][]",
+  "{}[]()"
+];
+
+console.log(braces(i1)); // ["YES","NO"]
+console.log(braces(i2)); // ["NO","YES","YES"]
+
+quick sort example
+
+var array = [7, 6, 5, 2, 4, 3, 9, 10, 1, 8];
+
+// basic implementation (pivot is the first element of the array)
+function quicksortBasic(array) {
+  if(array.length < 2) {
+    return array;
+  }
+
+  var pivot = array[0];
+  var lesser = [];
+  var greater = [];
+
+  for(var i = 1; i < array.length; i++) {
+    if(array[i] < pivot) {
+      lesser.push(array[i]);
+      console.log('Tiju-->lesser-->',lesser);
+    } else {
+      greater.push(array[i]);
+      console.log('Tiju-->greater-->',greater);
+    }
+  }
+      console.log('Tiju-->lesser,pivot,greater-->',lesser, pivot, greater);
+  return quicksortBasic(lesser).concat(pivot, quicksortBasic(greater));
+}
+
+console.log('Tiju-->',quicksortBasic(array.slice())); // => [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]

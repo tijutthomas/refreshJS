@@ -1,0 +1,10 @@
+karma - test runner (By Angular)
+	Jasmine - Test Framework with Spies feature. (Spies - spy a function by another spy function)
+	Mocha(Test Framework) + Sinon(Spy capability).
+		With a framework like Mocha, spies are not built-in and would require pairing it with a separate library like Sinon.js
+		The good news is that the switching costs between testing frameworks is relatively low with differences in syntax 
+		as small as Jasmine's toEqual() and Mocha's to.equal().
+		
+
+
+	

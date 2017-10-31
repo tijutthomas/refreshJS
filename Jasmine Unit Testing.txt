@@ -1,0 +1,441 @@
+Angular Test Case using Jasmine
+
+Matchers in Jasmine
+toBe(); --> not.toBe();    The 'toBe' matcher compares with ===.
+toEqual();--> not.toEqual(); should work for objects as well
+toMatch(); --> not.toMatch(); The 'toMatch' matcher is for regular expressions
+toBeDefined(); --> not.toBeDefined(); The 'toBeDefined' matcher compares against `undefined`
+toBeUndefined(); --> not.toBeUndefined(); The 'toBeDefined' matcher compares against `undefined`
+toBeNull(); --> not.toBeNull();
+toBeTruthy(); --> not.toBeTruthy(); The 'toBeTruthy' matcher is for boolean casting testing
+toBeFalsy(); --> not.toBeFalsy();
+toContain(); --> not.toContain();
+toBeLessThan(); --> not.toBeLessThan();
+toBeGreaterThan(); --> not.toBeGreaterThan();
+toBeCloseTo(); --> not.toBeCloseTo(); The 'toBeCloseTo' matcher is for precision math comparison var pi = 3.1415926,e = 2.78;
+    expect(pi).not.toBeCloseTo(e, 2);
+    expect(pi).toBeCloseTo(e, 0);
+toThrow(); --> not.toThrow();
+toThrowError(); --> The 'toThrowError' matcher is for testing a specific thrown exception
+			 
+APP/APP.JS
+angular.module('MyApp', [])
+.filter('reverse',[function(){
+    return function(string){
+        return string.split('').reverse().join('');
+    }
+}])
+
+SPECS/TESTS.JS – UNIT TEST CODE
+describe('Filters', function(){ //describe your object type
+    beforeEach(module('MyApp')); //load module
+    describe('reverse',function(){ //describe your app name
+        var reverse;
+        beforeEach(inject(function($filter){ //initialize your filter
+            reverse = $filter('reverse',{});
+        }));
+        it('Should reverse a string', function(){  //write tests
+            expect(reverse('rahil')).toBe('lihar'); //pass
+            expect(reverse('don')).toBe('nod'); //pass
+            //expect(reverse('jam')).toBe('oops'); // this test should fail
+        });
+    });
+});
+
+describe('Filters', function(){
+	beforeEach(module('myApp'));
+	describe('reverse', function(){
+		var reverse;
+		beforeEach(inject(function ($filter){
+			reverse = $filter('reverse',{});
+		}));
+		it('test reverse string', function(){
+			expect(reverse('Tiju')).toBe('ujiT');
+			expect(reverse('Tiju')).toBe('ujii');
+		});
+	});
+});
+   
+angular.module('MyApp', [])
+.filter('reverse',[function(){
+    return function(string){
+        return string.split('').reverse().join('');
+    };
+}]);
+
+KARMA.CONF.JS
+// Karma configuration
+module.exports = function(config) {
+  config.set({
+    // base path that will be used to resolve all patterns (eg. files, exclude)
+    basePath: '',
+    // frameworks to use
+    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+    frameworks: ['jasmine'],
+    // list of files / patterns to load in the browser
+    files: [
+      'node_modules/angular/angular.js',
+      'node_modules/angular-mocks/angular-mocks.js',
+      'app/app.js',  //use wildcards in real apps
+      'tests/tests.js' //use wildcards in real apps
+    ],
+    // list of files to exclude
+    exclude: [
+    ],
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    preprocessors: {
+    },
+    // test results reporter to use
+    // possible values: 'dots', 'progress'
+    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+    reporters: ['progress'],
+    // web server port
+    port: 9876,
+    // enable / disable colors in the output (reporters and logs)
+    colors: true,
+    // level of logging
+    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    logLevel: config.LOG_INFO,
+    // enable / disable watching file and executing tests whenever any file changes
+    autoWatch: true,
+    // start these browsers
+    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+    browsers: ['PhantomJS'],
+    // Continuous Integration mode
+    // if true, Karma captures browsers, runs the tests and exits
+    singleRun: false
+  })
+}
+
+karma start
+
+Testing a single property in Controller As syntax
+APP.JS
+angular.module('MyApp', [])
+.controller('myctrl',[function(){
+    var vm = this;
+    vm.mode = 'fun'; //Lets test if property name is set to Rahil
+}]);
+APP.SPECS.JS
+describe('Controllers', function(){ //describe your object type
+    beforeEach(module('MyApp')); //load module<br />
+    describe('myctrl',function(){ //describe your app name<br />
+        var myctrl;
+        beforeEach(inject(function($controller){ //instantiate controller using $controller service
+            myctrl = $controller('myctrl');
+        }));
+        it('Mode should be fun', function(){  //write tests
+            expect(myctrl.mode).toBe('fun'); //pass
+        });
+    });
+});
+
+Testing methods that set a property
+APP.JS
+angular.module('MyApp', [])
+.controller('myctrl',[function(){
+    var vm = this;
+    vm.mode = 'fun';
+    /** Adding method here */
+    vm.setDescription = function(age){
+        if(age &lt;= 10){
+            vm.description = 'child';
+        } else if(age > 10 &amp;&amp; age &lt; 18){
+            vm.description = 'teen';
+        } else if(age >= 18){
+             vm.description = 'adult';
+        }
+    }
+}]);
+
+APP.SPECS.JS
+describe('Controllers', function(){ //describe your object type
+    beforeEach(module('MyApp')); //load module
+    describe('myctrl',function(){ //describe your app name
+        beforeEach(inject(function($controller){ //instantiate controller using $controller service
+            myctrl = $controller('myctrl');
+        }));
+        it('Mode should be fun', function(){  //write tests
+            expect(myctrl.mode).toBe('fun'); //pass
+        });
+        /** Specs to test vm.description */
+        it('Should set desciption according to age', function(){
+            myctrl.setDescription(4); //calling the method with age=4
+            expect(myctrl.description).toBe('child'); //testing the property
+            myctrl.setDescription(15); //calling the method with age=15
+            expect(myctrl.description).toBe('teen');
+            myctrl.setDescription(54); //calling the method with age=54
+            expect(myctrl.description).toBe('adult');
+        });
+    });
+});
+
+Testing Methods that return value
+APP.JS
+vm.add = function(a,b){
+        if(typeof a !== 'number' || typeof b !== 'number'){
+            return 'invalid args';
+        }
+        return a+b;
+    }
+	
+APP.SPECS.JS
+ /** Specs to test vm.add() */
+        it('Should add two numbers', function(){
+            expect(myctrl.add(4,2)).toBe(6); //4+2 = 6
+            expect(myctrl.add('abcd',2)).toBe('invalid args'); // wrong arg type
+        });
+		
+Testing in $scope pattern
+APP.SPECS.JS
+var myctrl;
+var scope;
+beforeEach(inject(function($controller, $rootScope){ //instantiate controller using $controller service and inject $rootScope service
+	scope = $rootScope.$new();
+	myctrl = $controller('myctrl', {
+		scope : scope
+	});
+}));
+
+Mocking external dependencies used by controller and testing the result
+
+We will take an example of an asynchronous function defined on a factory on which our controller is depending. 
+We are using this example as asynchronous functions are the trickiest to deal with while writing unit tests.
+Let us go ahead and create a factory function and use it in our controller.
+
+APP.JS (FACTORY)
+angular.module('MyApp', [])
+.factory('myFactory',['$q', function($q){
+    return {
+        fetchServerData : function(error){ 
+            /** error is passed just as an example 
+            real case scenairio wolud be different and usually depend 
+            on the response from the web-service */
+            var d = $.q.defer();
+            if(error){
+                d.reject('Some error occured');
+            } else {
+                d.resolve('Success');
+            }
+            return d.promise;
+        }
+    }
+}]);
+
+APP.JS controller
+/** Calling our asynchronous service
+     * setting hasError and message properties
+     * There properties must be tested in specs
+     */
+    myFactory.fetchServerData().then(function(response){
+        //success scenario
+        vm.hasError = false
+        vm.message = response;
+    }, function(response){
+        //error scenario
+        vm.hasError = true;
+        vm.message = response;
+    });
+	
+APP.SPECS.JS
+Now let us open up our specs file and write our test.
+Just before where we are instantiating our controller, we need to initialise our external dependencies and spy on methods. 
+We will also have to inject myFactory as a dependency into our controller.
+
+        var d;
+        var myFactory;
+        beforeEach(inject(function($q, _myFactory_){ //Mock our factory and spy on methods
+            d = $q.defer();
+            myFactory = _myFactory_;
+            spyOn(myFactory, 'fetchServerData').and.returnValue(d.promise);
+        }));
+        var myctrl;
+        var scope;
+        beforeEach(inject(function($controller, $rootScope){ //instantiate controller using $controller service
+            scope = $rootScope.$new();
+            myctrl = $controller('myctrl', {
+                myFactory : myFactory, //inject factory
+                scope : scope
+            });
+        }));
+		
+Since our fetchServerData is asynchronous and returns a promise. We need to mock it to replicate a similar behaviour insde our specs using the $q service.
+Using Jasmines spyOn method we can track our methods and replicate actual implementations.
+Now that we are spying our method we can writes assertions to test the same.
+
+APP.SPECS.JS
+        describe('Asyn call', function() {
+            it('should call fetchServerData on myFactory', function() {
+                expect(myFactory.fetchServerData).toHaveBeenCalled();
+                expect(myFactory.fetchServerData.calls.count()).toBe(1);
+            });
+            it('should do something on success', function() {
+                d.resolve('Success'); // Resolve the promise to replicate success scenario.
+                scope.$digest();
+                // Check for state on success.
+                expect(myctrl.hasError).toBe(false); //testing properties
+                expect(myctrl.message).toBe('Success');
+            });
+            it('should do something on error', function() {
+                d.reject('Some error occured'); // Reject the promise to emulate error scenario.
+                scope.$digest();
+                // Check for state on error.
+                expect(myctrl.hasError).toBe(true);
+                expect(myctrl.message).toBe('Some error occured');
+            });
+        });
+
+We are first checking that our method is called and the number of times it is called.
+Next, we are testing the two possible scenarios ie. Success and Failure. 
+In which we are validating that our properties are accurately set depending on success or error.
+
+
+Final Files
+Our complete app.js and app.specs.js files look like this.
+
+APP.JS
+
+angular.module('MyApp', [])
+.controller('myctrl',['myFactory', function(myFactory){
+    var vm = this;
+    vm.mode = 'fun'; 
+    vm.setDescription = function(age){
+        if(age &lt;= 10){
+            vm.description = 'child';
+        } else if(age > 10 &amp;&amp; age &lt; 18){
+            vm.description = 'teen';
+        } else if(age >= 18){
+             vm.description = 'adult';
+        }
+    }
+    vm.add = function(a,b){
+        if(typeof a !== 'number' || typeof b !== 'number'){
+            return 'invalid args';
+        }
+        return a+b;
+    }
+    /** Calling our asynchronous service
+     * setting hasError and message properties
+     * There properties must be tested in specs
+     */
+    myFactory.fetchServerData().then(function(response){
+        vm.hasError = false
+        vm.message = response;
+    }, function(response){
+        vm.hasError = true;
+        vm.message = response;
+    });
+}])
+.factory('myFactory',['$q', function($q){
+    return {
+        fetchServerData : function(error){ 
+            /** error is passed just as an example 
+            real case scenairio wolud be different and usually depend 
+            on the response from the web-service */
+            var d = $.q.defer();
+            if(error){
+                d.reject('Some error occured');
+            } else {
+                d.resolve('Success');
+            }
+            return d.promise;
+        }
+    }
+}]);
+APP.SPECS.JS
+describe('Controllers', function(){ //describe your object type
+    beforeEach(module('MyApp')); //load module    
+    describe('myctrl',function(){ //describe your app name
+        var d;
+        var myFactory;
+        beforeEach(inject(function($q, _myFactory_){ //Mock our factory and spy on methods
+            d = $q.defer();
+            myFactory = _myFactory_;
+            spyOn(myFactory, 'fetchServerData').and.returnValue(d.promise);
+        }));  
+        var myctrl;
+        var scope;
+        beforeEach(inject(function($controller, $rootScope){ //instantiate controller using $controller service
+            scope = $rootScope.$new();
+            myctrl = $controller('myctrl', {
+                myFactory : myFactory, //inject factory
+                $scope : scope
+            });
+        }));        
+        it('Mode should be fun', function(){  //write tests
+            expect(myctrl.mode).toBe('fun'); //pass
+        });
+        /** Specs to test vm.description */
+        it('Should set desciption according to age', function(){
+            myctrl.setDescription(4); //calling the method with age=4
+            expect(myctrl.description).toBe('child'); //testing the property           
+            myctrl.setDescription(15); //calling the method with age=15
+            expect(myctrl.description).toBe('teen');        
+            myctrl.setDescription(54); //calling the method with age=54
+            expect(myctrl.description).toBe('adult');
+        });
+         /** Specs to test vm.add() */
+        it('Should add two numbers', function(){
+            expect(myctrl.add(4,2)).toBe(6); //4+2 = 6           
+            expect(myctrl.add('abcd',2)).toBe('invalid args'); // wrong arg type
+        });    
+        describe('Asyn call', function() {
+            it('should call fetchServerData on myFactory', function() {
+                expect(myFactory.fetchServerData).toHaveBeenCalled();
+                expect(myFactory.fetchServerData.calls.count()).toBe(1);
+            });
+            it('should do something on success', function() {
+                d.resolve('Success'); // Resolve the promise to replicate success scenario.
+                scope.$digest();
+                // Check for state on success.
+                expect(myctrl.hasError).toBe(false); //testing properties
+                expect(myctrl.message).toBe('Success');
+            });
+            it('should do something on error', function() {
+                d.reject('Some error occured'); // Reject the promise to emulate error scenario.
+                scope.$digest();
+                // Check for state on error.
+                expect(myctrl.hasError).toBe(true);
+                expect(myctrl.message).toBe('Some error occured');
+            });
+        });
+    });    
+});
+
+
+describe("mainController", function () {
+    var controller, scope;
+    beforeEach(function () {
+        module("app"); //load module
+    });
+
+    beforeEach(inject(function ($controller, $rootScope) {
+        scope = $rootScope.$new();
+        controller = $controller("mainController", { $scope: scope });
+    }));    
+
+    it("$scope.active.nav defaults to invoices", function () {
+        expect(scope.active.nav).toEqual("invoices");
+    });
+
+    it("$scope.active.list defaults to unpaid", function () {
+        expect(scope.active.list).toEqual("unpaid");
+    });
+
+    it("$scope.active.tab defaults to empty string", function () {
+        expect(scope.active.tab).toEqual("");
+    });
+
+    it("$scope.active.view defaults to empty string", function () {
+        expect(scope.active.view).toEqual("");
+    });
+      
+    it("list defaults to invoices", function () {
+        expect(scope.current.list).toEqual({ name: "client-ach-debits-lists", params: { id: "all" }, options: { reload: false } });
+    });
+
+    it("list defaults to unpaid", function () {
+        expect(scope.current.tab).toEqual({});
+    });        
+});

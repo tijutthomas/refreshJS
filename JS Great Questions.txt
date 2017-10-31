@@ -1,0 +1,46 @@
+call, apply, bind in Javascript
+Mixins in javascript ==> achieving multiple inheritance.
+Prototype in Javascript.
+Promise/callback in javascript
+Constructors in javascript.
+Closures
+Angular/Backbone MVC or MVVM, Why Angular -->
+this in javascript
+Hoisting in Javascript
+How to clear arrays in javascript.
+Drawback of private methods in Javascript.
+is null object in Javascript.
+objectA = objectB, what is result of objectA.objectBvariable? both same to same reference.
+use strict mode in Javascript.
+Design patterns in Javascript.
+How to pass Array as pass by value to function? yourArray.slice(0) will pass copy not reference of array.
+
+ECMA6 (June 2015)
+classes in javascript
+Arrow functions
+
+
+What datatypes are supported in Javascript?
+Undefined
+Number
+String
+Boolean
+Object
+Function
+Null
+
+Explain the meaning of  the keyword ‘this’ in JavaScript functions
+The keyword ‘this’ in JavaScript refers to the object that a function is a method of. If it’s not specified, it will default to the global object, the window.
+In the example below, you can see that ‘this’ refers to the box object when it is applied to the width function. When no object is passed in, 
+it will default to the browser window.
+
+CSS
+---
+
+Pseduo Classes in CSS.
+after and before in CSS.
+Attribute selector in CSS.
+What is Mixins in LESS.
+float left in Bootstrap --> pull-left.
+3 same classes having difference color in each class, which color will apply to element when all classes are added to element.
+CSS inline, id, class priority order.

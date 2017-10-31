@@ -1,0 +1,82 @@
+function getFoos(n) {
+    var foos = [];
+
+    for (var i = 0; i < n; i++) {
+        foos[i] = function() {
+            console.log(i);
+        }
+    }
+    return foos;
+}
+var foos = getFoos(5);
+foos[0](); // What is written to the console log? Why?
+
+///////////////////////////////////////
+
+/**
+ * Sort given array of people by age.
+ * 
+ * Example: 
+ * 
+ * var people = [{name: 'John', age:10}, {name: 'Jane', age:5}, {name: 'Phil', age:33}];
+ * sortByAge(people); // returns [{name: 'Jane', age:5}, {name: 'John', age:10}, {name: 'Phil', age:33}]
+ * 
+ * @param {object[]} People.
+ * @return {object[]} People sorted by age.
+ */
+function sortByAge(people) {
+   people.sort(function (a,b){
+   		return a.age - b.age;
+   })
+   return people;
+}
+
+/////////////////////////////////////
+
+(function() {
+    console.log(1); 
+    setTimeout(function(){console.log(2)}, 1000); 
+    setTimeout(function(){console.log(3)}, 0); 
+    console.log(4);
+})();
+
+//////////////////////////////////////
+
+// Write a class Animal, Cat, and Dog that have a `speak` function.
+// Animal should log 'rawr', Cat should log 'meow', and Dog should log 'woof'.
+// Cat and Dog should extend Animal and should not include their own implementation of `speak`.
+
+function Animal(){
+  	this.voice = 'rawr';
+//	this.speak = 
+}
+
+Animal.prototype.speak = function(){
+    	console.log(this.voice);
+    //}
+}
+function Dog(){
+    this.voice = "woof";
+}
+function Cat(){
+	this.voice = "meow";
+}
+
+Dog.prototype = new Animal();
+
+Cat.prototype = new Animal();
+
+var d = new Dog();
+var c = new Cat();
+var a = new Animal();
+
+d.speak();
+c.speak();
+a.speak();
+
+
+
+
+
+
+

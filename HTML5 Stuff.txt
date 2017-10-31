@@ -1,0 +1,331 @@
+<nav>, <header>, <footer>, <article, <section, <main
+
+HTML5
+<head>
+	<meta charset="UTF-8">
+</head>
+
+HTML4
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+HTML5 Form Elements
+-------------------
+HTML5 added the following form elements:
+
+<datalist>
+<keygen>
+<output>
+
+HTML5 Input Types
+-----------------
+
+HTML5 added several new input types:
+
+color
+date
+datetime-local
+email
+month
+number
+range
+search
+tel
+time
+url
+week
+
+HTML5 Web Workers
+-----------------
+
+A web worker is a JavaScript running in the background, without affecting the performance of the page.
+
+What is a Web Worker?
+When executing scripts in an HTML page, the page becomes unresponsive until the script is finished.
+
+A web worker is a JavaScript that runs in the background, independently of other scripts, without affecting the performance of the page. 
+You can continue to do whatever you want: clicking, selecting things, etc., while the web worker runs in the background.
+
+HTML Web Workers Example
+The example below creates a simple web worker that count numbers in the background:
+
+Example
+Count numbers: 
+Start Worker  Stop Worker
+
+Try it Yourself »
+Check Web Worker Support
+Before creating a web worker, check whether the user's browser supports it:
+
+if (typeof(Worker) !== "undefined") {
+    // Yes! Web worker support!
+    // Some code.....
+} else {
+    // Sorry! No Web Worker support..
+}
+Create a Web Worker File
+Now, let's create our web worker in an external JavaScript.
+
+Here, we create a script that counts. The script is stored in the "demo_workers.js" file:
+
+var i = 0;
+
+function timedCount() {
+    i = i + 1;
+    postMessage(i);
+    setTimeout("timedCount()",500);
+}
+
+timedCount();
+The important part of the code above is the postMessage() method - which is used to post a message back to the HTML page.
+
+Note: Normally web workers are not used for such simple scripts, but for more CPU intensive tasks.
+
+Create a Web Worker Object
+Now that we have the web worker file, we need to call it from an HTML page.
+
+The following lines checks if the worker already exists, if not - it creates a new web worker object and runs the code in "demo_workers.js":
+
+if (typeof(w) == "undefined") {
+    w = new Worker("demo_workers.js");
+}
+Then we can send and receive messages from the web worker.
+Add an "onmessage" event listener to the web worker.
+
+w.onmessage = function(event){
+    document.getElementById("result").innerHTML = event.data;
+};
+When the web worker posts a message, the code within the event listener is executed. The data from the web worker is stored in event.data.
+
+Terminate a Web Worker
+When a web worker object is created, it will continue to listen for messages (even after the external script is finished) until it is terminated.
+
+To terminate a web worker, and free browser/computer resources, use the terminate() method:
+
+w.terminate();
+Reuse the Web Worker
+If you set the worker variable to undefined, after it has been terminated, you can reuse the code:
+
+w = undefined;
+Full Web Worker Example Code
+We have already seen the Worker code in the .js file. Below is the code for the HTML page:
+
+Example
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Count numbers: <output id="result"></output></p>
+<button onclick="startWorker()">Start Worker</button> 
+<button onclick="stopWorker()">Stop Worker</button>
+
+<script>
+var w;
+
+function startWorker() {
+    if(typeof(Worker) !== "undefined") {
+        if(typeof(w) == "undefined") {
+            w = new Worker("demo_workers.js");
+        }
+        w.onmessage = function(event) {
+            document.getElementById("result").innerHTML = event.data;
+        };
+    } else {
+        document.getElementById("result").innerHTML = "Sorry! No Web Worker support.";
+    }
+}
+
+function stopWorker() { 
+    w.terminate();
+    w = undefined;
+}
+</script>
+
+</body>
+</html>
+
+Web Workers and the DOM
+Since web workers are in external files, they do not have access to the following JavaScript objects:
+
+The window object
+The document object
+The parent object
+
+
+HTML5 Local Storage
+-------------------
+HTML local storage; better than cookies.
+
+What is HTML Local Storage?
+With local storage, web applications can store data locally within the user's browser.
+
+Before HTML5, application data had to be stored in cookies, included in every server request. Local storage is more secure, 
+and large amounts of data can be stored locally, without affecting website performance.
+Unlike cookies, the storage limit is far larger (at least 5MB) and information is never transferred to the server.
+
+Local storage is per origin (per domain and protocol). All pages, from one origin, can store and access the same data.
+
+HTML Local Storage Objects
+HTML local storage provides two objects for storing data on the client:
+
+window.localStorage - stores data with no expiration date
+window.sessionStorage - stores data for one session (data is lost when the browser tab is closed)
+Before using local storage, check browser support for localStorage and sessionStorage:
+
+if (typeof(Storage) !== "undefined") {
+    // Code for localStorage/sessionStorage.
+} else {
+    // Sorry! No Web Storage support..
+}
+The localStorage Object
+The localStorage object stores the data with no expiration date. The data will not be deleted when the browser is closed, 
+and will be available the next day, week, or year.
+
+Example
+// Store
+localStorage.setItem("lastname", "Smith");
+// Retrieve
+document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+
+The example above could also be written like this:
+
+// Store
+localStorage.lastname = "Smith";
+// Retrieve
+document.getElementById("result").innerHTML = localStorage.lastname;
+The syntax for removing the "lastname" localStorage item is as follows:
+
+localStorage.removeItem("lastname");
+
+Note: Name/value pairs are always stored as strings. Remember to convert them to another format when needed!
+The following example counts the number of times a user has clicked a button. 
+In this code the value string is converted to a number to be able to increase the counter:
+
+Example
+if (localStorage.clickcount) {
+    localStorage.clickcount = Number(localStorage.clickcount) + 1;
+} else {
+    localStorage.clickcount = 1;
+}
+document.getElementById("result").innerHTML = "You have clicked the button " +
+localStorage.clickcount + " time(s).";
+Try it Yourself »
+The sessionStorage Object
+The sessionStorage object is equal to the localStorage object, except that it stores the data for only one session. The data is deleted when the user closes the specific browser tab.
+
+The following example counts the number of times a user has clicked a button, in the current session:
+
+Example
+if (sessionStorage.clickcount) {
+    sessionStorage.clickcount = Number(sessionStorage.clickcount) + 1;
+} else {
+    sessionStorage.clickcount = 1;
+}
+document.getElementById("result").innerHTML = "You have clicked the button " +
+sessionStorage.clickcount + " time(s) in this session.";
+
+HTML5 Application Cache
+-----------------------
+With application cache it is easy to make an offline version of a web application, by creating a cache manifest file.
+
+What is Application Cache?
+HTML5 introduces application cache, which means that a web application is cached, and accessible without an internet connection.
+
+Application cache gives an application three advantages:
+
+Offline browsing - users can use the application when they're offline
+Speed - cached resources load faster
+Reduced server load - the browser will only download updated/changed resources from the server
+
+HTML Cache Manifest Example
+The example below shows an HTML document with a cache manifest (for offline browsing):
+
+Example
+<!DOCTYPE HTML>
+<html manifest="demo.appcache">
+
+<body>
+The content of the document......
+</body>
+
+</html>
+
+Cache Manifest Basics
+To enable application cache, include the manifest attribute in the document's <html> tag:
+
+<!DOCTYPE HTML>
+<html manifest="demo.appcache">
+...
+</html>
+Every page with the manifest attribute specified will be cached when the user visits it. If the manifest attribute is not specified, the page will not be cached (unless the page is specified directly in the manifest file).
+
+The recommended file extension for manifest files is: ".appcache"
+
+A manifest file needs to be served with the correct media type, which is "text/cache-manifest". Must be configured on the web server.
+
+The Manifest File
+The manifest file is a simple text file, which tells the browser what to cache (and what to never cache).
+
+The manifest file has three sections:
+
+CACHE MANIFEST - Files listed under this header will be cached after they are downloaded for the first time
+NETWORK - Files listed under this header require a connection to the server, and will never be cached
+FALLBACK - Files listed under this header specifies fallback pages if a page is inaccessible
+CACHE MANIFEST
+The first line, CACHE MANIFEST, is required:
+
+CACHE MANIFEST
+/theme.css
+/logo.gif
+/main.js
+The manifest file above lists three resources: a CSS file, a GIF image, and a JavaScript file. 
+When the manifest file is loaded, the browser will download the three files from the root directory of the web site. 
+Then, whenever the user is not connected to the internet, the resources will still be available.
+
+NETWORK
+The NETWORK section below specifies that the file "login.asp" should never be cached, 
+and will not be available offline:
+
+NETWORK:
+login.asp
+An asterisk can be used to indicate that all other resources/files require an internet connection:
+
+NETWORK:
+*
+FALLBACK
+The FALLBACK section below specifies that "offline.html" will be served in place of all files in the /html/ catalog, 
+in case an internet connection cannot be established:
+
+FALLBACK:
+/html/ /offline.html
+Note: The first URI is the resource, the second is the fallback.
+
+Updating the Cache
+Once an application is cached, it remains cached until one of the following happens:
+
+The user clears the browser's cache
+The manifest file is modified (see tip below)
+The application cache is programmatically updated
+Example - Complete Cache Manifest File
+CACHE MANIFEST
+# 2012-02-21 v1.0.0
+/theme.css
+/logo.gif
+/main.js
+
+NETWORK:
+login.asp
+
+FALLBACK:
+/html/ /offline.html
+Tip: Lines starting with a "#" are comment lines, but can also serve another purpose. 
+An application's cache is only updated when its manifest file changes. If you edit an image or change a JavaScript function, 
+those changes will not be re-cached. Updating the date and version in a comment line is one way to make the browser re-cache your files.
+
+Notes on Application Cache
+Be careful with what you cache.
+
+Once a file is cached, the browser will continue to show the cached version, even if you change the file on the server. 
+To ensure the browser updates the cache, you need to change the manifest file.
+Note: Browsers may have different size limits for cached data (some browsers have a 5MB limit per site).

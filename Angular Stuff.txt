@@ -1,0 +1,334 @@
+ng-disabled=formName.valid
+
+https://plnkr.co/edit/eXmwyq?p=info
+
+Angular 
+
+Directives eg ng-click, Binding Expressions eg : {{ message }}
+Below all are directives in angular starting with ng-
+
+ng-app
+ng-contoller
+ng-model
+ng-hide/ng-show
+ng-disabled
+ng-init --> ng-init should be used for aliasing special properties of ng-repeat directives like below after 2 lines.
+ng-src for imagesexamples if src 2 server calls happen one fail and second one succeed after binding express evalutes.
+ng-repeat="employee in employees" ng-init="parentIndex=$index">
+   nested ng-repeat
+   $index for current index and $parent.$index for parent index.
+ng-click
+ng-filter --> Format, Sort and Filter
+   {{ expression | filterName:parameter }}
+In built filters
+   lowercase, uppercase, number, currency, date 
+	eg: {{salary | number:2}}, {{salary | currency:"$":1}}, {{dob | date:"dd/MM/yyyy"}}	
+   limitTo filter --> {{ expression | limitTo: limit : begin}}
+
+   {{ orderBy_expression | orderBy : expression : reverse}}
+   {{ orderBy_expression | orderBy : +expression}}
+
+
+   {{ filterBy_expression | filter : searchText or searchFunction}}
+
+Custom Filter angularApp.filter
+	is a function returns a function.
+	Use filter function to create custom filter.
+
+
+ng-class
+ng-include
+
+Service in Angular (Purpose - Reusability, Dependency Injection, Testability)
+------------------
+Built in services eg : $https, $log, $location etc
+$http $http.get(url)
+	   .then(function response){}
+$http service returns a promise object. Default transformation of javascript object to JSON by angular $http and viceversa for response as well.
+$log service to log the response data.
+Services in angular are stateless just return the data.
+Custom Service - factory, services and providers
+
+$anchorscroll - Service used to jump specified element on page.
+   $location.hash(targetLocationId) append hash fragments to the URL.
+   $anchorscroll() method read hash fragment on URL and jump to that element on page.
+   yoffset property specifies the vertical scroll-offset.
+
+html --> fieldSet --> legend.
+
+ng-scope --> class name for scope part. Use it to find all watchers.
+$watch, $watchers, $watchGroup, $watchCollection - Performance concern limit watch to 2000
+
+Routing in AngularJS
+--------------------
+ngRoute as Dependency.
+angularApp.config(fn ($routeProvider, $locationProvider){
+	$routeProvider.when("/home", {
+			 templateUrl:"home.html", OR template:"<h1>In line template by giving in template instead of templateUrl</h>",
+		 	 controller:"homeContorller"
+	               })
+		      .when("/courses", {
+			 templateUrl:"courses.html",
+		 	 controller:"coursesContorller",
+			 controllerAs : "coursesCntrl", 
+			 caseInsensitiveMatch:true
+	               })
+		       .otherwise({
+			 redirectTo: "/home"
+		       })   
+		       $locationProvider.html5Mode(true); for removing # from urls came from href in <a> tag
+		    })
+	$routeProvider.caseInsensitiveMatch = true; //Setting at routing level instead of doing at each when level.
+	Set <base href="/"/> to the location of SPA.
+ng-View --> to include subview or template html inside this tag.
+$routeParams --> $routeParams.id
+
+Page Refresh issue - move <base href="/"/> above all css and scripts, move immedidately after title tag. 
+
+$scope and ControllerAs Syntax --> no need of $scope to inject to controller but need controller alias name to use it.
+
+<h1 ng-controller="mainCntrl as main">{{main.message}}<h1>
+Nested Controllers with same field like country, state, city -- name use there own controller nested make confuse, so use Controller As will help good code readability. 
+
+Route reload -- $route.reload() only reloads the current scoped controller divs.
+
+$scope VS $rootScope
+$rootScope is available globally for all controllers where as $scope is only available to the controller that has created it and its children.
+
+Route change --> Whenever route change happens in angular, 4 events are triggered. $routeChangeStart, $locationChangeStart, $routeChangeSuccess, $locationChangeSuccess
+Cancel route Change 
+	$routeChangeStart and 
+	$locationChangeStart. Only differnce is next and current object data. location next,curren object has complete url.
+	$scope.$on("$routeChangeStart", function (event, next, current){
+		if(!confirm("Are you sure to navigage to + next.$$route.originalPath")){
+			event.preventDefault();
+		}
+	});
+route Change Events
+$scope.$on("$locationChangeStart", function (event, next, current){});
+
+optional URL parameter --> .when("/studentsSearch/:name?")    --> ? indicates optional parameter.
+$location.url("/studentsSearch/"+vm.name);
+
+route Resolve --> resolved route only after the successfull call with one or more promises happened in below code and needs to inject studentList object in controller to use the data.
+		   $routeProvider.when("/courses", {
+			 templateUrl:"Templates/students.html",
+		 	 controller:"studentsContorller",
+			 controllerAs : "studentsCntrl", 
+			 resolve : {		/returning a promise and routing will happen only after promise resolved successfully after the time taken to complete call.
+				studentsList : function($http){
+					return $http.get(/getAllStudents)
+					       .then(function (response)
+						  return response.data;
+						)
+				}
+			 }
+	           })
+Angular-ui-router
+ui-router ---> third party framework for angular rourting with ngRoute features + addional features.
+ui-router implements routing based on the state of the application  where as ngRoute implements routing based on the routeURL.
+Add ui-router js link or cdn link.
+Add ui-router as module dependency. ui.router
+Add ui-directive in the layout page.
+
+ui-router configuring states - A state corresponds to place in the application.
+angularApp.config(fn ($stateProvider, $locationProvider){
+$stateProvider.state(stateName, stateConfig);
+	$stateProvider.state("home", {
+		url: "/home",
+		templateUrl:"Templates/home.html",
+		controller:"homeController",
+		controllerAs:"homeCtrl"
+    })
+}
+$routeProvider.when [in ng-Route] == $stateProvider.state [in ui.router]
+Instead of $route use $state which also has reload().
+Instead of href in <a> tag use "ui-sref" which will take state name not url.
+
+ui Router Params --> .id
+	$stateProvider.state("studentDetails", {
+		url: "/students/:id",
+		templateUrl:"Templates/studentDetails.html",
+		controller:"studentDetailsController",
+		controllerAs:"studentDetailsCtrl"
+	    })
+	<li ng-repeat="student in studentsCtrl.students">
+		<a ui-sref="studentDetails({id:student.id})">
+
+	params: {id:$stateParams.id}
+
+optional URL parameter --> parameters are optional by default in ui-router    --> ? indicates optional parameter in ng-Route.
+()$state.go("studentsSearch",{name : vm.name});    ----In ng-Route $location.url("/studentsSearch/"+vm.name);
+$stateParams --> $stateParams.id instead of $routeParams --> $routeParams.id 
+
+Case-insensitive in ui-router for routes.
+	inject $urlMatcherFactoryProvider service into config() function and call caseInsensitive(true) function.
+	$urlMatcherFactoryProvider.caseInsensitive(true);
+ui router default route
+	inject $urlRouterProvider to config plus $urlRouterProvider.otherwise("/home");
+ui router Custom data
+	Pass data : {customData1:"Courses state Custom Data 1, customData2:"Courses state Custom Data 2"} while defining state "courses".
+	this.homeCustomData1 = $state.current.data.customData1;
+	this.coursesCustomData1 = $state.get("courses").data.customData1;
+
+HTML5 mode routing in angular app using ui-router
+	$locationProvider.html5Mode(true); similar like ngRoute
+	<base href="/">
+ui-router active state css
+	<a ui-sref="home" ui-sref-active="activeState">Home</a>
+ui-router nested views/states
+    using dot notation	
+	.state("studentParent", {
+		//parent state config props
+	})
+	.state("studentParent.students", {
+		//child state config props
+	})
+    Using parent property with parenet name as string.
+	.state("studentParent", {
+		//parent state config props
+	})
+	.state("students", {
+		parent:"studentParent",
+		//child state config props
+	})
+
+    abstract:true --> state will not be activated implicity it will be active only when child state activate.
+	ui-view for child template instead of ng-view.
+
+ui router multiple named views. 
+	<div ui-view="totalData"></div>
+	<div ui-view="studentData"></div>
+Define views : {} inside studentParent.students state for studentData and totalData. 
+
+ngRoute Vs ui-router
+
+ngRoute by Angular ui-router is third party.
+ng-Route implements routing based on the route URL where as ui-router implements routing based on the state of the application.
+ui-router provides everything that ngRoute module provides plus following additional features.
+	Nested States and Views.
+	Multiple Named Views.
+
+Angular 1.5 and Angular 2
+-------------------------
+
+Template Directive (ng1) + Controller (ng1) = Component (ng2)
+
+Angular 1.5 recently introduced components, a feature also available in Angular 2. Using components from and in Angular 1.x 
+makes a lot of the sense as it will help your application bridge the gap between Angular 1.x and Angular 2, which is the main 
+reason why the Angular team announced components availability in Angular 1.5.
+
+What’s a component?
+
+A component is basically a directive that uses a simpler configuration and that is suitable for a component-based architecture, 
+which is what Angular 2 is all about.  Think of a component as a widget: A piece of HTML code that you can reuse in several different places in your web application.
+
+Template Directive (ng1) + Controller (ng1) = Component (ng2)
+
+angular.module("myApp", [])
+  .component("helloWorld",{
+      template: 'Hello World!'
+  });
+
+How to use external data in a component
+	<div ng-app="myApp"> 
+	  <hello-world name="'John'" > </hello-world>
+	</div>
+
+<span>Hello John!</span>
+We achieve this by defining bindings for our component. Here we basically define the name of the attribute that will be added to our component along with the type of binding we want to use. 
+There are four different types of bindings:
+
+= means that we’re using a two-way data binding. This means that if you update that variable in your component scope, the change will be reflected on the parent scope;
+< is for one-way bindings when we just want to read a value from a parent scope and not update it;
+@ is for string parameters;
+& is for callbacks in case your component needs to output something to its parent scope.
+
+In our case, we want to use a simple string so our component will look like this:
+
+angular.module("myApp", [])
+  .component("helloWorld",{
+      template: 'Hello {{$ctrl.name}}!',
+      bindings: { name: '@' }
+  });
+
+Note that bindings are added to the local scope of your component, which is bound to a controller called $ctrl by default. 
+That’s the reason why our HTML template gets the value to display through the {{$ctrl.name}} expression.
+
+angular.module("myApp", [])
+  .component("helloWorld",{
+      template: "Hello {{$ctrl.name}}, I'm {{$ctrl.myName}}!",
+      bindings: { name: '@' },
+      controller: function(){
+        this.myName = 'Alain';
+      }
+  });
+You do not have to define your controller locally. It is actually better to define it in a separate file and use a controller name instead of a function definition in our component definition. 
+Note that it’s also possible to use your own controller name with the controllerAs attribute, in case you don’t like $ctrl.
+
+In some instances you may need to access data from a parent component inside your component. This can be achieved by specifying that our component requires that parent component, which can then be used in our controller as shown in the example below:
+
+angular.module("myApp", [])
+  .component("helloWorld",{
+      template: "Hello {{$ctrl.name}}, I'm {{$ctrl.myName}}!",
+      bindings: { name: '@' },
+      require: {
+        parent: '^parentComponent'
+      },
+      controller: function () {
+       // use this.parent to access required Objects
+       this.parent.foo();
+      }
+  });
+
+Lifecycle hooks
+
+Now you know almost everything there is to know about components. One last thing though: Angular 1.x components come with lifecycle hooks, 
+just like their Angular 2 counterparts.
+
+These are methods that will be called at certain points in the life of the component. The following hook methods can be implemented:
+
+$onInit()
+Called on each controller after all the controllers on an element have been constructed and had their bindings initialized. 
+This is a good place to put initialization code for your controller.
+
+$onChanges(changesObj)
+Called whenever one-way bindings are updated. The changesObj is a hash whose keys are the names of the bound properties that have changed, 
+and the values are an object of the form { currentValue, previousValue, isFirstChange() }
+
+$onDestroy()
+Called on a controller when its containing scope is destroyed. Use this hook for releasing external resources, watches and event handlers.
+
+$postLink()
+Called after this controller’s element and its children have been linked. This hook can be considered analogous to the ngAfterViewInit and ngAfterContentInit hooks in Angular 2.
+
+How would you implement application-wide exception handling in your Angular app?
+================================================================================
+
+Angular has a built-in error handler service called $exceptionHandler which can easily be overriden as seen below:
+myApp.factory('$exceptionHandler', function($log, ErrorService) {
+    return function(exception, cause) {
+        
+        if (console) {
+            $log.error(exception);
+            $log.error(cause);
+        }
+
+        ErrorService.send(exception, cause);
+    };
+});
+This is very useful for sending errors to third party error logging services or helpdesk applications. Errors trapped inside of event callbacks are not propagated to this handler, 
+but can manually be relayed to this handler by calling $exceptionHandler(e) from within a try catch block.
+
+How would you react on model changes to trigger some further action? For instance, say you have an input text field called email and you want to trigger or execute some code as soon as a user starts to type in their email.
+
+We can achieve this using $watch function in our controller.
+function MyCtrl($scope) {
+	$scope.email = "";
+
+	$scope.$watch("email", function(newValue, oldValue) {
+		if ($scope.email.length > 0) {
+			console.log("User has started writing into email");
+		}
+	});
+}
