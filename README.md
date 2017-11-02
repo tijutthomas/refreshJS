@@ -17,3 +17,7 @@ reduce(callback,initialValue) takes in two parameters, callback function and ini
 prev refers to the first item in the array while next refers to the second item. But take note that if you pass in a initialValue, that prev will take on that initialValue and next will be the first value of the array.
 
 Use Case: Parse the array and return an object that contains the number of times each string occured in the array.
+
+Algorithms/Data Structures
+
+https://github.com/duereg/js-algorithms/tree/master/lib/dataStructures
