@@ -1,9 +1,9 @@
 function binarySearchTree(){
 	function getBinaryNode(dataToAdd){
 		return {
-			data = dataToAdd;
-			left = null;
-			right = null;
+			data : dataToAdd,
+			left : null,
+			right : null
 		};
 	}
 	
@@ -39,5 +39,3 @@ function binarySearchTree(){
 	return bst;
 	
 }
-
-module.exports = binarySearchTree();
