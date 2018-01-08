@@ -1,5 +1,8 @@
 ng-disabled=formName.valid
 
+directives restrict - E,A,C - Isolated Scope
+Why Service Singleton?
+
 https://plnkr.co/edit/eXmwyq?p=info
 
 Angular 
@@ -218,7 +221,7 @@ Angular 1.5 recently introduced components, a feature also available in Angular 
 makes a lot of the sense as it will help your application bridge the gap between Angular 1.x and Angular 2, which is the main 
 reason why the Angular team announced components availability in Angular 1.5.
 
-What’s a component?
+WhatÂ’s a component?
 
 A component is basically a directive that uses a simpler configuration and that is suitable for a component-based architecture, 
 which is what Angular 2 is all about.  Think of a component as a widget: A piece of HTML code that you can reuse in several different places in your web application.
@@ -239,7 +242,7 @@ How to use external data in a component
 We achieve this by defining bindings for our component. Here we basically define the name of the attribute that will be added to our component along with the type of binding we want to use. 
 There are four different types of bindings:
 
-= means that we’re using a two-way data binding. This means that if you update that variable in your component scope, the change will be reflected on the parent scope;
+= means that weÂ’re using a two-way data binding. This means that if you update that variable in your component scope, the change will be reflected on the parent scope;
 < is for one-way bindings when we just want to read a value from a parent scope and not update it;
 @ is for string parameters;
 & is for callbacks in case your component needs to output something to its parent scope.
@@ -253,7 +256,7 @@ angular.module("myApp", [])
   });
 
 Note that bindings are added to the local scope of your component, which is bound to a controller called $ctrl by default. 
-That’s the reason why our HTML template gets the value to display through the {{$ctrl.name}} expression.
+ThatÂ’s the reason why our HTML template gets the value to display through the {{$ctrl.name}} expression.
 
 angular.module("myApp", [])
   .component("helloWorld",{
@@ -264,7 +267,7 @@ angular.module("myApp", [])
       }
   });
 You do not have to define your controller locally. It is actually better to define it in a separate file and use a controller name instead of a function definition in our component definition. 
-Note that it’s also possible to use your own controller name with the controllerAs attribute, in case you don’t like $ctrl.
+Note that itÂ’s also possible to use your own controller name with the controllerAs attribute, in case you donÂ’t like $ctrl.
 
 In some instances you may need to access data from a parent component inside your component. This can be achieved by specifying that our component requires that parent component, which can then be used in our controller as shown in the example below:
 
@@ -300,7 +303,7 @@ $onDestroy()
 Called on a controller when its containing scope is destroyed. Use this hook for releasing external resources, watches and event handlers.
 
 $postLink()
-Called after this controller’s element and its children have been linked. This hook can be considered analogous to the ngAfterViewInit and ngAfterContentInit hooks in Angular 2.
+Called after this controllerÂ’s element and its children have been linked. This hook can be considered analogous to the ngAfterViewInit and ngAfterContentInit hooks in Angular 2.
 
 How would you implement application-wide exception handling in your Angular app?
 ================================================================================
