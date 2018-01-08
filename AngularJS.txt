@@ -1,6 +1,12 @@
 ng-disabled=formName.valid
 
 directives restrict - E,A,C - Isolated Scope
+In the custom AngularJS directives series you’ve seen several of the key aspects available in directives such as templates, isolate scope, and local scope properties. As a review, isolate scope is created in a directive by using the scope property and assigning it an object literal. Three types of local scope properties can be added into isolate scope including:
+
+@  Used to pass a string value into the directive
+=    Used to create a two-way binding to an object that is passed into the directive
+&    Allows an external function to be passed into the directive and invoked
+
 Why Service Singleton?
 
 https://plnkr.co/edit/eXmwyq?p=info
