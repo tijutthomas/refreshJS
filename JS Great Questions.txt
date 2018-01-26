@@ -6,6 +6,8 @@ XMLHttpRequest 5 readyStates -
         4	DONE	The operation is complete.
         
 Immutable/mutable javascript types.
+        A mutable object is an object whose state can be modified after it is created. An immutable object is an object whose state cannot be modified after it is created. Examples of native JavaScript values that are immutable are numbers and strings. Examples of native JavaScript values that are mutable include objects, arrays, functions, classes, sets, and maps.
+
 Default JS data type of var str = "string"
 Preflight request - headers matching check.
 
