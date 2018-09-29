@@ -91,3 +91,6 @@ let total= arr.reduce(function(sum, element, index, array) {
 console.log("total is "+total);
 Output:
 total is 21
+
+The first parameter is the aggregator element. It has the sum of elements at any given point. And it’s initial value is defined as the additional element. In our case it’s 0.
+
