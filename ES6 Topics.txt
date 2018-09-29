@@ -1,0 +1,48 @@
+ES 6 Questions
+--------------
+
+cons/let
+this in arrow functions
+Destructuring
+map/weakmap
+
+REST Web API Design Architecture.
+
+command query design - CQRS
+Onion Architecture - 
+Domain Driven Design
+
+ES 6 Topics to remember
+-----------------------
+
+Array Map - Map operator is used to do a specific operation on all elements of an array and it returns an array with modified elements.
+let arr = [1,2,3,4,5];
+let modifiedArr = arr.map(function(element, index, arr) {
+  return element * 10;
+});
+console.log(modifiedArr);
+Output:
+[10, 20, 30, 40, 50]
+
+Array filter is used to filter the whole array based on some condition. Array filter takes each element of an array and checks with the given condition. If the element passes the condition it keeps the element in the array else it removes the element.
+
+let arr = [1, 2, 3, 4, 5, 6]
+let modifiedArr = arr.filter(function(element, index, array) {
+  return element % 2 == 0
+});
+console.log(modifiedArr);
+Output:
+[2, 4, 6]
+let modifiedAarr = arr.filter((element, index) => element%2 == 0)
+
+Array reduce is used to aggregate all the elements of an array and return a single value.
+let arr = [1,2,3,4,5,6]
+let total= arr.reduce(function(sum, element, index, array) {
+  return sum + element;
+},0);
+console.log("total is "+total);
+Output:
+total is 21
+
+The first parameter is the aggregator element. It has the sum of elements at any given point. And it’s initial value is defined as the additional element. In our case it’s 0.
+
