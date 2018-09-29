@@ -1,0 +1,306 @@
+https://www.robinwieruch.de/react-testing-tutorial/
+
+Unit Tests for React State Changes
+----------------------------------
+
+Mocha - Task Runner
+Chai - Test case assertions
+jsdom - Artifical browser environment
+
+import { doIncrement, doDecrement } from './App';
+describe('Local State', () => {
+  it('should increment the counter in state', () => {
+    const state = { counter: 0 };
+    const newState = doIncrement(state);
+
+    expect(newState.counter).to.equal(1);
+  });
+
+  it('should decrement the counter in state', () => {
+    const state = { counter: 0 };
+    const newState = doDecrement(state);
+
+    expect(newState.counter).to.equal(-1);
+  });
+});
+
+helpers.js dom.js for setting up above test environment
+helpers.js
+----------
+import { expect } from 'chai';
+global.expect = expect;
+
+dom.js
+------
+import { JSDOM } from 'jsdom';
+const { window } = new JSDOM('<!doctype html><html><body></body></html>');
+function copyProps(src, target) {
+  const props = Object.getOwnPropertyNames(src)
+    .filter(prop => typeof target[prop] === 'undefined')
+    .reduce((result, prop) => ({
+      ...result,
+      [prop]: Object.getOwnPropertyDescriptor(src, prop),
+    }), {});
+  Object.defineProperties(target, props);
+}
+global.window = window;
+global.document = window.document;
+global.navigator = {
+  userAgent: 'node.js',
+};
+copyProps(window, global);
+
+npm run test:unit or npm run test:unit:watch
+"scripts": {
+  "start": "webpack-dev-server --config ./webpack.config.js",
+  "test:unit": "mocha --require babel-core/register --require ./test/helpers.js --require ./test/dom.js --require ignore-styles 'src/**/*.spec.js'",
+  "test:unit:watch": "npm run test:unit -- --watch"
+},
+
+Note: If you want to run your tests in watch mode with npm run test:unit:watch along with your development server with npm start, 
+you need to open two terminal tabs to be able to execute both scripts side by side.
+
+Enzyme
+------
+shallow - simplest form of rendering a component. render only that compoent but not the contents of child component - Used for unit testing of particular component.
+mount - render child components as well - runs complete life cycle - used for integration testing of components.
+render - lighweight component rendering when compared to mount used for integration testing.
+
+While shallow() only renders the component without the content of child components, mount() renders all child components as well. 
+It renders the whole component hierarchy. While the former is used for component tests in isolation (unit tests, lightweight integration), 
+the latter is used for real integration tests. Integration tests are more likely to break, because they include all the children and logic of your component tree. 
+Thus the maintenance costs are higher for integration tests. People are saying it’s more expensive to write and maintain those tests than unit tests. 
+Last but not least, the third function to render your React components with Enzyme is called render(). It is similar to mount(), because it renders all child components. 
+But from a performance point of view, it is less expensive than mount(), because it doesn’t run the lifecycle methods of your component. 
+So if you need access to child components but are not interested in lifecycle methods, you can use render() instead of mount().
+
+helpers.js
+import sinon from 'sinon';
+import { expect } from 'chai';
+import { mount, render, shallow, configure} from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
+configure({ adapter: new Adapter() });
+
+global.expect = expect;
+
+global.sinon = sinon;
+
+global.mount = mount;
+global.render = render;
+global.shallow = shallow;
+
+
+describe('App Component', () => {
+  it('renders the Counter wrapper', () => {
+    const wrapper = shallow(<App />);
+    expect(wrapper.find(Counter)).to.have.length(1);
+  });
+});
+
+We can also simulate events like click with simulate.
+it('increments the counter', () => {
+    const wrapper = shallow(<App />);
+
+    wrapper.setState({ counter: 0 });
+    wrapper.find('button').at(0).simulate('click');
+
+    expect(wrapper.state().counter).to.equal(1);
+});
+
+
+Sinon - React Testing with Sinon: Testing Asynchronous Logic
+-----
+
+Spies - 
+Stubs - “Test stubs are functions (spies) with pre-programmed behavior.” That way, you have full control over your spies.
+Mocks -  
+Sinon can be used for spies, stubs, and mocks. In the following, you will use a spy and a stub for testing your asynchronous business logic in your React component. 
+These are most of the time sufficient for testing async logic in your code.
+
+A spy can be used on any function for assertions. After a spy is applied to it, you can assert for example how many times the function was called for the test.
+
+describe('App Component', () => {
+  it('calls componentDidMount', () => {
+    sinon.spy(App.prototype, 'componentDidMount');
+
+    const wrapper = mount(<App />);
+    expect(App.prototype.componentDidMount.calledOnce).to.equal(true);
+  });
+});
+In the test, you expected the componentDidMount() lifecycle method, which is available via the prototype chain on the App component, to be called only once. 
+If you know the lifecycle methods of React components, it should be clear that this method is only called once when the component mounts. 
+Afterward, it’s not called again. Thus the test should succeed. That’s essentially how you would test React lifecycle methods.
+
+Async tests in a React application - componentDidMount()n fetches data from third party APIs using axios.
+
+componentDidMount() {
+    axios.get('http://mypseudodomain/counter')
+      .then(counter => this.setState({ asyncCounters: counter }))
+      .catch(error => console.log(error));
+  }
+
+
+“Test stubs are functions (spies) with pre-programmed behavior.” That way, you have full control over your spies.
+
+...
+
+describe('App Component', () => {
+  const result = [3, 5, 9];
+  const promise = Promise.resolve(result);
+
+  before(() => {
+    sinon.stub(axios, 'get').withArgs('http://mydomain/counter').returns(promise);
+  });
+
+  after(() => {
+    axios.get.restore();
+  });
+
+  ...
+
+  it('fetches async counters', () => {
+    const wrapper = shallow(<App />);
+
+    expect(wrapper.state().asyncCounters).to.equal(null);
+
+    promise.then(() => {
+      expect(wrapper.state().asyncCounters).to.equal(result);
+    });
+  });
+});
+
+Jest - Snapshot Tests for Components
+------------------------------------
+Jest for snapshot tests, you can keep your tests lightweight. You can easily set them up and either accept or deny changes when the diffing fails. 
+It’s more about the rendered output and less about the business logic of the component.
+Jest comes with its own test runner and assertion functions.
+When using Jest, you can define your testing blocks with a “test”-block instead of a “it”-block or, for instance, 
+you can make an assertion with toEqual() (Jest assertion) instead of to.equal() (Chai assertion). 
+After all, if you want to use Jest for everything, you can skip the Mocha and Chai setup. If you want to perform React testing with Jest and Enzyme, 
+you can setup Enzyme (and Sinon) in the Jest environment without having to deal with Mocha and Chai.
+
+First, you have to install it as dev dependency on the command line. It uses a utility library called react-test-renderer to render your actual component:
+
+npm install --save-dev jest react-test-renderer
+
+create a Jest configuration file in your test/ folder:
+
+test/jest.config.json
+Third, add the following configuration for Jest to your newly created file:
+
+{
+  "testRegex": "((\\.|/*.)(snapshot))\\.js?$",
+  "rootDir": ".."
+}
+
+"scripts": {
+  "start": "webpack-dev-server --config ./webpack.config.js",
+  "test:unit": "mocha --require babel-core/register --require ./test/helpers.js --require ./test/dom.js --require ignore-styles 'src/**/*.spec.js'",
+  "test:unit:watch": "npm run test:unit -- --watch",
+  "test:snapshot": "jest --config ./test/jest.config.json",
+  "test:snapshot:watch": "npm run test:snapshot -- --watch"
+},
+npm run test:snapshot
+
+cd src
+touch App.snapshot.js
+Second, you can write the snapshot tests for the App and Counter components. Minimal snapshot tests always follow the same pattern.
+
+import React from 'react';
+import renderer from 'react-test-renderer';
+
+import App, { Counter } from './App';
+
+describe('App Snapshot', () => {
+  test('renders', () => {
+    const component = renderer.create(
+      <App />
+    );
+    let tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+});
+
+describe('Counter Snapshot', () => {
+  test('renders', () => {
+    const component = renderer.create(
+      <Counter counter={1} />
+    );
+    let tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+});
+
+That’s it. You can run your snapshot tests on the command line now. Hopefully they should be successful for you. Afterward, try to change the output in the render() 
+method of the App component. For instance, add a <h1> tag with some string to it. Once you run your snapshot tests on the command line again, 
+the test for the App component should fail. You can either accept or fix the snapshot now.
+
+
+Cypress.io - End to End Testing
+-------------------------------
+
+npm install --save-dev cypress
+Second, you can create a dedicated folder for Cypress and its E2E tests in your project folder. It comes with its given folder structure.
+
+cd cypress
+cd integration
+
+Third, you can add a script for npm to your package.json file. That way, you are able to run Cypress easily from the command line.
+
+"scripts": {
+  .....
+  "test:cypress": "cypress open"
+}
+
+App.e2e.js
+
+"test:cypress": "start-server-and-test start http://localhost:8080 cypress",
+  "cypress": "cypress run"
+  
+Finally, you can visit your running application with Cypress in your end-to-end test. Therefore you will use the global cy cypress object. 
+In addition, you can also add your first E2E test which verifies your header tag (h1) from your application.
+
+describe('App E2E', () => {
+  it('should have a header', () => {
+    cy.visit('http://localhost:8080');
+
+    cy.get('h1')
+      .should('have.text', 'My Counter');
+  });
+});
+
+cypress.json --> videorecording:false
+
+E2E test you are going to implement will test the two interactive buttons in your React application. After clicking each button, 
+the counter integer which is shown in the paragraph tag should change. Let’s begin by verifying that the counter is 0 when the application just started.
+
+describe('App E2E', () => {
+  it('should have a header', () => {
+    cy.visit('/');
+
+    cy.get('h1')
+      .should('have.text', 'My Counter');
+  });
+
+  it('should increment and decrement the counter', () => {
+    cy.visit('/');
+
+    cy.get('p')
+      .should('have.text', '0');
+
+    cy.contains('Increment').click();
+    cy.get('p')
+      .should('have.text', '1');
+
+    cy.contains('Increment').click();
+    cy.get('p')
+      .should('have.text', '2');
+
+    cy.contains('Decrement').click();
+    cy.get('p')
+      .should('have.text', '1');
+  });
+});
+
+Coveralls - React Component Test Coverage
