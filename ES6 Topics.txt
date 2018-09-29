@@ -5,6 +5,9 @@ cons/let
 this in arrow functions
 Destructuring
 map/weakmap
+Template Literals - Template literals are used to execute any JS expressions. 
+Imports and Exports  - Exports are used in modules to explicitly exporting some variables or functions or classes. (i.e) if you export a variable it can be used in other modules.Imports are used to import variable, functions, classes from other modules.
+
 
 REST Web API Design Architecture.
 
@@ -46,3 +49,16 @@ total is 21
 
 The first parameter is the aggregator element. It has the sum of elements at any given point. And it’s initial value is defined as the additional element. In our case it’s 0.
 
+Template Literals
+----------------
+Template literals are used to execute any JS expressions. You can add any expression easily and also multi-line strings.
+
+let name = "thomas";
+let languages = () => {return "Ruby, Js, Java, Python"}
+let msg = `My name is ${name}
+My age is ${20+3}
+And I code in ${languages()}`
+Output:
+My name is thomas
+My age is 23
+And I code in Ruby, Js, Java, Python
