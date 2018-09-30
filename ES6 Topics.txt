@@ -5,6 +5,8 @@ cons/let
 this in arrow functions
 Destructuring
 map/weakmap
+Destructuring objects and arrays
+Extend and Super
 Template Literals - Template literals are used to execute any JS expressions. 
 Imports and Exports  - Exports are used in modules to explicitly exporting some variables or functions or classes. (i.e) if you export a variable it can be used in other modules.Imports are used to import variable, functions, classes from other modules.
 
@@ -62,3 +64,133 @@ Output:
 My name is thomas
 My age is 23
 And I code in Ruby, Js, Java, Python
+
+Imports and Exports
+-------------------
+
+Exports are used in modules to explicitly exporting some variables or functions or classes. (i.e) if you export a variable it can be used in other modules.Imports are used to import variable, functions, classes from other modules.
+
+app.js
+export let name = "Jon"
+export let age = 23
+index.js
+import {name, age} from './app'
+console.log(name);
+console.log(age);
+index.html
+<script src="./index.js"></script>
+Output:
+Jon
+23
+
+app.js
+export default const name = "Jon"
+index.js
+import name from './app.js'
+console.log(name);
+Output:
+Jon
+In the above code, you can see we have used a new keyword default. Default values are mostly used if you need to export a single value or function or object from a module. And there can be only one default value in a module.
+
+One more thing about default values. Since there will be only one default value in a module you can use any name to reference it during import.
+
+app.js
+let a = 10;
+let b = 2;
+let sum = () => a+b;
+export {a,b}
+export default sum
+index.js
+import * as variables from './app'
+import addition from './app' // default value
+console.log(variables.a);
+console.log(variables.b);
+console.log(addition());
+Output:
+10
+2
+12
+In the above example you can see we have exported two variables and a function. And we have imported all the variables using *.
+
+There are two things to remember while importing.
+
+If you are using * to import values then you have to use alias (i.e) names that will refer to imported values. In our example we have used variables as alias.
+Using * to import values doesn’t import default value. You have to import it separately.
+import addition, * as variables from './app'
+If you need to import default value and other values in a single line, you can use the above syntax.
+
+Destructuring objects and arrays
+-------------------------------
+
+let person = {firstName: "Jon", lastName: "Snow", age: 23}
+const {firstName} = person
+console.log(firstName);
+Output:
+Jon
+
+let person = {firstName: "Jon", lastName: "Snow", age: 23}
+const {firstName: name, age} = person
+console.log(name);
+console.log(age);
+Output:
+Jon
+23
+
+let arr = [1,2,3,4,5,6]
+let [a,b,,d,e] = arr
+console.log(a);
+console.log(b);
+console.log(d);
+console.log(e);
+Output:
+1
+2
+4
+5
+
+let person = {firstName: "Jon", lastName: "Snow", age: 23}
+let displayName = ({firstName, lastName:last}) => {
+  console.log(`${firstName} - ${last}`);
+}
+displayName(person);
+Output:
+Jon - Snow
+
+Extend and Super
+----------------
+
+class Person{
+ constructor(firstName, lastName, age) {
+   this.firstName = firstName;
+   this.lastName = lastName;
+   this.age = age;
+ }
+ displayName() {
+  return `${this.firstName} - ${this.lastName}`;
+ }
+}
+class Employee extends Person {
+ constructor(firstName, lastName, age, salary) {
+  super(firstName, lastName, age);
+  this.salary = salary;
+ }
+ displaySalary() {
+  return `${this.salary}`;
+ }
+ displayName() {
+  return super.displayName();
+ }
+ displayAge() {
+  return this.age;
+ }
+}
+let manager = new Employee("Jon", "Snow", 23, 100);
+console.log(manager.displaySalary());
+console.log(manager.displayName());
+console.log(manager.displayAge());
+Output:
+100
+Jon Snow
+23
+
+Note: you can use this in the sub-class only after calling super. If you use this before calling super in the sub-class you will get RefrenceError.
