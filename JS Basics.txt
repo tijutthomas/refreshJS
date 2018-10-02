@@ -67,7 +67,8 @@ This is called a JavaScript closure. It makes it possible for a function to have
 The counter is protected by the scope of the anonymous function, and can only be changed using the add function!
 
 In the JavaScript (or any ECMAScript) language, in particular, closures are useful in hiding the implementation of functionality while still revealing the interface.
-For example, imagine you are writing a class of date utility methods and you want to allow users to lookup weekday names by index but you don't want them to be able to modify the array of names you use under the hood.
+For example, imagine you are writing a class of date utility methods and you want to allow users to lookup weekday names by index but you don't want them to be able 
+to modify the array of names you use under the hood.
 
 var dateUtil = {
   weekdayShort: (function() {
@@ -80,11 +81,12 @@ var dateUtil = {
     };
   }())
 };
-Note that the days array could simply be stored as a property of the dateUtil object but then it would be visible to users of the script and they could even change it if they wanted, without even needing your source code. However, 
-since it's enclosed by the anonymous function which returns the date lookup function it is only accessible by the lookup function so it is now tamper-proof.
+Note that the days array could simply be stored as a property of the dateUtil object but then it would be visible to users of the script and they could even change it 
+if they wanted, without even needing your source code. However, since it's enclosed by the anonymous function which returns the date lookup function it is only accessible 
+by the lookup function so it is now tamper-proof.
 
 Question 4 - Codementor
-What is a ìclosureî in JavaScript? Provide an example
+What is a ‚Äúclosure‚Äù in JavaScript? Provide an example
 
 A closure is a function defined inside another function (called the parent function), and has access to variables that are declared and defined in the parent function scope.
 
@@ -112,7 +114,8 @@ var globalVar = "abc";
  
     }// end of scope innerFunction)(5); // Pass 5 as parameter 
 }// end of scope outerFunction )(7); // Pass 7 as parameter 
-innerFunction is closure that is defined inside outerFunction and has access to all variables declared and defined in the outerFunction scope. In addition, the function defined inside another function as a closure will have access to variables declared in the global namespace.
+innerFunction is closure that is defined inside outerFunction and has access to all variables declared and defined in the outerFunction scope. 
+In addition, the function defined inside another function as a closure will have access to variables declared in the global namespace.
 
 Thus, the output of the code above would be:
 
@@ -152,7 +155,7 @@ var emp2 = new Employee("Merry","Pluto",2000);
 var emp3 = new Employee("Ren","Pluto",2500);
 Here each instance variable emp1, emp2, emp3 has its own copy of the increaseSalary private method.
 
-So, as a recommendation, donít use private methods unless itís necessary.
+So, as a recommendation, don‚Äôt use private methods unless it‚Äôs necessary.
 
 Promise
 -------
@@ -166,16 +169,19 @@ In the meantime the Promise object acts like a proxy to the actual data.
 Furthermore, you can attach callbacks to the Promise object which will be called once the actual data is available.
 
 The API
-To get started, letís examine the following code which creates a new Promise object.
+To get started, let‚Äôs examine the following code which creates a new Promise object.
 
 if (window.Promise) { // Check if the browser supports Promises
   var promise = new Promise(function(resolve, reject) {
     //asynchronous code goes here
   });
 }
-We start by instantiating a new Promise object and passing it a callback function. The callback takes two arguments, resolve and reject, which are both functions. All your asynchronous code goes inside that callback. If everything is successful, the promise is fulfilled by calling resolve(). In case of an error, reject() is called with an Error object. This indicates that the promise is rejected.
+We start by instantiating a new Promise object and passing it a callback function. The callback takes two arguments, resolve and reject, which are both functions. 
+All your asynchronous code goes inside that callback. If everything is successful, the promise is fulfilled by calling resolve(). In case of an error, reject() is 
+called with an Error object. This indicates that the promise is rejected.
 
-Now letís build something simple which shows how promises are used. The following code makes an asynchronous request to a web service that returns a random joke in JSON format. Letís examine how promises are used here.
+Now let‚Äôs build something simple which shows how promises are used. The following code makes an asynchronous request to a web service that returns a random joke 
+in JSON format. Let‚Äôs examine how promises are used here.
 
 if (window.Promise) {
   console.log('Promise found');
@@ -211,19 +217,30 @@ if (window.Promise) {
 } else {
   console.log('Promise not available');
 }
-In the previous code, the Promise constructor callback contains the asynchronous code used to get data the from remote service. Here, we just create an Ajax request to http://api.icndb.com/jokes/random which returns a random joke. When a JSON response is received from the remote server, it is passed to resolve(). In case of any error, reject() is called with an Error object.
+In the previous code, the Promise constructor callback contains the asynchronous code used to get data the from remote service. Here, we just create an Ajax request 
+to http://api.icndb.com/jokes/random which returns a random joke. When a JSON response is received from the remote server, it is passed to resolve(). 
+In case of any error, reject() is called with an Error object.
 
-When we instantiate a Promise object we get a proxy to the data that will be available in future. In our case we are expecting some data to be returned from the remote service at some point in future. So, how do we know when the data becomes available? This is where the Promise.then() function is used. This function takes two arguments: a success callback and a failure callback. These callbacks are called when the Promise is settled (i.e. either fulfilled or rejected). If the promise was fulfilled, the success callback will be fired with the actual data you passed to resolve(). If the promise was rejected, the failure callback will be called. Whatever you passed to reject() will be passed as an argument to this callback.
+When we instantiate a Promise object we get a proxy to the data that will be available in future. In our case we are expecting some data to be returned from the 
+remote service at some point in future. So, how do we know when the data becomes available? This is where the Promise.then() function is used. 
+This function takes two arguments: a success callback and a failure callback. These callbacks are called when the Promise is settled (i.e. either fulfilled or rejected). 
+If the promise was fulfilled, the success callback will be fired with the actual data you passed to resolve(). If the promise was rejected, the failure callback will be called. 
+Whatever you passed to reject() will be passed as an argument to this callback.
 
-Try this Plunkr example. Simply refresh the page to view a new random joke. Also, open up your browser console so that you can see the order in which the different parts of the code are executed. Note that a promise can have three states:
+Try this Plunkr example. Simply refresh the page to view a new random joke. Also, open up your browser console so that you can see the order in which 
+the different parts of the code are executed. Note that a promise can have three states:
 
 pending (not fulfilled or rejected)
 fulfilled
 rejected
-The Promise.status property, which is code-inaccessible and private, gives information about these states. Once a promise is rejected or fulfilled, this status gets permanently associated with it. This means a promise can succeed or fail only once. If the promise has already been fulfilled and later you attach a then() to it with two callbacks, the success callback will be correctly called. So, in the world of promises, we are not interested in knowing when the promise is settled. We are only concerned with the final outcome of the promise.
+The Promise.status property, which is code-inaccessible and private, gives information about these states. Once a promise is rejected or fulfilled, 
+this status gets permanently associated with it. This means a promise can succeed or fail only once. If the promise has already been fulfilled and 
+later you attach a then() to it with two callbacks, the success callback will be correctly called. So, in the world of promises, we are not interested 
+in knowing when the promise is settled. We are only concerned with the final outcome of the promise.
 
 Chaining Promises
-It is sometimes desirable to chain promises together. For instance, you might have multiple asynchronous operations to be performed. When one operation gives you data, you will start doing some other operation on that piece of data and so on. Promises can be chained together as demonstrated in the following example.
+It is sometimes desirable to chain promises together. For instance, you might have multiple asynchronous operations to be performed. When one operation gives you data, 
+you will start doing some other operation on that piece of data and so on. Promises can be chained together as demonstrated in the following example.
 
 function getPromise(url) {
   // return a Promise here
@@ -239,10 +256,12 @@ promise.then(function(result) {
 }).then(function(result) {
   //handle the final result
 });
-The tricky part is that when you return a simple value inside then(), the next then() is called with that return value. But if you return a promise inside then(), the next then() waits on it and gets called when that promise is settled.
+The tricky part is that when you return a simple value inside then(), the next then() is called with that return value. But if you return a promise inside then(), 
+the next then() waits on it and gets called when that promise is settled.
 
 Handling Errors
-You already know the then() function takes two callbacks as arguments. The second one will be called if the promise was rejected. But, we also have a catch() function which can be used to handle promise rejection. Have a look at the following code:
+You already know the then() function takes two callbacks as arguments. The second one will be called if the promise was rejected. But, we also have a catch() 
+function which can be used to handle promise rejection. Have a look at the following code:
 
 promise.then(function(result) {
   console.log('Got data!', result);
@@ -263,7 +282,7 @@ Note that we could use try...catch to handle errors,
 but that is not necessary with promises as any asynchronous or synchronous error is always caught by catch().
 
 Conclusion
-This was just a brief introduction to JavaScriptís new Promises API. Clearly it lets us write asynchronous code very easily. 
+This was just a brief introduction to JavaScript‚Äôs new Promises API. Clearly it lets us write asynchronous code very easily. 
 We can proceed as usual without knowing what value is going to be returned from the asynchronous code in the future. 
 There is more to the API, which has not been covered here. 
 To learn more about Promises, browse the following resources, and stay tuned to SitePoint!
@@ -304,18 +323,20 @@ function Book() {
 } 
 var myBook = new Book();
 The last line of the code creates an instance of Book and assigns it to a variable; even though the Book constructor doesn't do anything, 
-myBook is still an instance of it. As you can see there is no difference between this function and regular functions except that we call it with the new keyword and the function name is capitalized.
+myBook is still an instance of it. As you can see there is no difference between this function and regular functions except that we call it 
+with the new keyword and the function name is capitalized.
 
 #Determining the Type of an Instance
 To find out whether an object is an instance of another one, we use the instanceof operator:
 
 myBook instanceof Book    // true
 myBook instanceof String  // false
-Note that if the right side of the instanceof operator isnít a function, it will throw an error:
+Note that if the right side of the instanceof operator isn‚Äôt a function, it will throw an error:
 
 myBook instanceof {};
 // TypeError: invalid 'instanceof' operand ({})
-Another way to find the type of an instance is using the constructor property. All object instances have a constructor property that point to the constructor function that created it.
+Another way to find the type of an instance is using the constructor property. All object instances have a constructor property that point to 
+the constructor function that created it.
 
 Consider the following code fragment:
 
@@ -358,8 +379,9 @@ console.log(myBook.name);    // Book: Single Page Web Applications
 // but we can change the value of the name property
 myBook.name = "Testable JavaScript";
 console.log(myBook.name);    // Book: Testable JavaScript
-In this code we used accessor properties inside the Object.defineProperty(). Accessor properties donít include any properties or methods, but they define a getter to call when the property is read, and a setter to call when the property is written to.
+In this code we used accessor properties inside the Object.defineProperty(). Accessor properties don‚Äôt include any properties or methods, 
+but they define a getter to call when the property is read, and a setter to call when the property is written to.
 
-A getter is expected to return a value, while a setter receives the value being assigned to the property as an argument. This constructor allows us to set or change the name property of instances, but we are not allowed to delete it, and when we get the value of name, the getter prepends the string "Book: " to the name and returns it.
-
-250403
+A getter is expected to return a value, while a setter receives the value being assigned to the property as an argument. This constructor allows 
+us to set or change the name property of instances, but we are not allowed to delete it, and when we get the value of name, the getter prepends 
+the string "Book: " to the name and returns it.
