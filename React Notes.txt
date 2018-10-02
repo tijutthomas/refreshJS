@@ -1,0 +1,977 @@
+ReactJS is JavaScript library used for building reusable UI components. 
+
+React Features
+--------------
+JSX − JSX is JavaScript syntax extension. It isn't necessary to use JSX in React development, but it is recommended.
+Components − React is all about components. You need to think of everything as a component. This will help you maintain 
+the code when working on larger scale projects.
+Unidirectional data flow and Flux − React implements one-way data flow which makes it easy to reason about your app. 
+Flux is a pattern that helps keeping your data unidirectional.
+
+React Advantages -
+Uses virtual DOM which is a JavaScript object. This will improve apps performance, since JavaScript virtual DOM is faster than the regular DOM.
+Can be used on client and server side as well as with other frameworks.
+Component and data patterns improve readability, which helps to maintain larger apps
+
+React Limitations - 
+Covers only the view layer of the app, hence you still need to choose other technologies to get a complete tooling set for development.
+Uses inline templating and JSX, which might seem awkward to some developers.
+
+ReactJS Using Webpack and Babel
+-------------------------------
+Webpack is a module bundler (manages and loads independent modules). It takes dependent modules and compiles them to a single (file) bundle. 
+You can use this bundle while developing apps using command line or, by configuring it using webpack.config file.
+
+Babel is a JavaScript compiler and transpiler. It is used to convert one source code to other. Using this you will be able to use the new 
+ES6 features in your code where, babel converts it into plain old ES5 which can be run on all browsers.
+
+Lifecycle Methods
+-----------------
+
+componentWillMount is executed before rendering, on both the server and the client side.
+
+componentDidMount is executed after the first render only on the client side. This is where AJAX requests and DOM or state updates should occur. 
+This method is also used for integration with other JavaScript frameworks and any functions with delayed execution such as setTimeout or setInterval. 
+We are using it to update the state so we can trigger the other lifecycle methods.
+
+componentWillReceiveProps is invoked as soon as the props are updated before another render is called. We triggered it from setNewNumber when we updated 
+the state.
+
+shouldComponentUpdate should return true or false value. This will determine if the component will be updated or not. This is set to true by default. 
+If you are sure that the component doesn't need to render after state or props are updated, you can return false value.
+
+componentWillUpdate is called just before rendering.
+
+componentDidUpdate is called just after rendering.
+
+componentWillUnmount is called after the component is unmounted from the dom. We are unmounting our component in main.js.
+
+import React from 'react';
+
+class App extends React.Component {
+   constructor(props) {
+      super(props);
+      
+      this.state = {
+         data: 0
+      }
+      this.setNewNumber = this.setNewNumber.bind(this)
+   };
+   setNewNumber() {
+      this.setState({data: this.state.data + 1})
+   }
+   render() {
+      return (
+         <div>
+            <button onClick = {this.setNewNumber}>INCREMENT</button>
+            <Content myNumber = {this.state.data}></Content>
+         </div>
+      );
+   }
+}
+class Content extends React.Component {
+   componentWillMount() {
+      console.log('Component WILL MOUNT!')
+   }
+   componentDidMount() {
+      console.log('Component DID MOUNT!')
+   }
+   componentWillReceiveProps(newProps) {    
+      console.log('Component WILL RECIEVE PROPS!')
+   }
+   shouldComponentUpdate(newProps, newState) {
+      return true;
+   }
+   componentWillUpdate(nextProps, nextState) {
+      console.log('Component WILL UPDATE!');
+   }
+   componentDidUpdate(prevProps, prevState) {
+      console.log('Component DID UPDATE!')
+   }
+   componentWillUnmount() {
+      console.log('Component WILL UNMOUNT!')
+   }
+   render() {
+      return (
+         <div>
+            <h3>{this.props.myNumber}</h3>
+         </div>
+      );
+   }
+}
+export default App;
+
+
+React Notes
+-----------
+
+onClick attribute has a special meaning to React because it is a built-in component.
+In React it is a convention to use on[Event] names for props which represent events and handle[Event] for the methods which handle the events.
+
+Detecting changes in mutable objects is difficult because they are modified directly. This detection requires the mutable object to be compared 
+to previous copies of itself and the entire object tree to be traversed.
+Detecting changes in immutable objects is considerably easier. If the immutable object that is being referenced is different than the previous one, 
+then the object has changed.
+
+Determining When to Re-render in React
+The main benefit of immutability is that it helps you build pure components in React. Immutable data can easily determine if changes have been made 
+which helps to determine when a component requires re-rendering.
+
+var player = {score: 1, name: 'Jeff'};
+
+var newPlayer = Object.assign({}, player, {score: 2});
+// Now player is unchanged, but newPlayer is {score: 2, name: 'Jeff'}
+
+// Or if you are using object spread syntax proposal, you can write:
+// var newPlayer = {...player, score: 2};
+
+class Square extends React.Component {
+  render() {
+    return (
+      <button
+        className="square"
+        onClick={() => this.props.onClick()}
+      >
+        {this.props.value}
+      </button>
+    );
+  }
+}
+
+Functional Components
+---------------------
+In React, functional components are a simpler way to write components that only contain a render method and don’t have their own state. 
+Instead of defining a class which extends React.Component, we can write a function that takes props as input and returns what should be rendered. 
+Functional components are less tedious to write than classes, and many components can be expressed this way.
+
+function Square(props) {
+  return (
+    <button className="square" onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
+}
+
+When we modified the Square to be a functional component, we also changed onClick={() => this.props.onClick()} to a shorter onClick={props.onClick} 
+(note the lack of parentheses on both sides). In a class, we used an arrow function to access the correct this value, but in a functional component 
+we don’t need to worry about this.
+
+key is a special and reserved property in React (along with ref, a more advanced feature). When an element is created, React extracts the key property 
+and stores the key directly on the returned element. Even though key may look like it belongs in props, key cannot be referenced using this.props.key. 
+React automatically uses key to decide which components to update. A component cannot inquire about its key.
+
+Keys do not need to be globally unique. Keys only needs to be unique between components and their siblings.
+
+npx create-react-app react-app-crap
+
+React uses JSX for templating instead of regular JavaScript. It is not necessary to use it, however, following are some pros that come with it.
+
+It is faster because it performs optimization while compiling code to JavaScript.
+It is also type-safe and most of the errors can be caught during compilation.
+It makes it easier and faster to write templates, if you are familiar with HTML.
+JSX looks like a regular HTML in most cases. 
+If we want to return more elements, we need to wrap it with one container element. Notice how we are using div as a wrapper for h1, h2 and p elements.
+
+We can use our own custom attributes in addition to regular HTML properties and attributes. When we want to add custom attribute, we need to use data- prefix. 
+In the following example, we added data-myattribute as an attribute of p element.
+
+JS Expressions
+--------------
+
+JavaScript expressions can be used inside of JSX. We just need to wrap it with curly brackets {}. 
+We cannot use if else statements inside JSX, instead we can use conditional (ternary) expressions. In the following example, variable i equals to 1 so the browser will render true, 
+If we change it to some other value, it will render false.
+
+Styling
+-------
+React recommends using inline styles. When we want to set inline styles, we need to use camelCase syntax. React will also automatically append px after the number 
+value on specific elements. The following example shows how to add myStyle inline to h1 element.
+When writing comments, we need to put curly brackets {} when we want to write comment within children section of a tag. It is a good practice to always use {} 
+when writing comments, since we want to be consistent when writing the app.
+
+import React from 'react';
+
+class App extends React.Component {
+   render() {
+      var myStyle = {
+         fontSize: 100,
+         color: '#FF0000'
+      }
+      return (
+         <div>
+            <h1 style = {myStyle}>Header</h1>
+			{//End of the line Comment...}
+            {/*Multi line comment...*/}
+         </div>
+      );
+   }
+}
+export default App;
+
+Naming Convention
+-----------------
+
+HTML tags always use lowercase tag names, while React components start with Uppercase.
+Note − You should use className and htmlFor as XML attribute names instead of class and for.
+This is explained on React official page as −
+Since JSX is JavaScript, identifiers such as class and for are discouraged as XML attribute names. Instead, React DOM components expect DOM property names such as className and htmlFor, respectively.
+
+Stateless and Stateful
+---------------------
+
+Stateless - Functional components with render only and no state mentioned.
+Stateful - Parent/Owner component uses state and send data to child as props.
+State is the place where the data comes from. We should always try to make our state as simple as possible and minimize the number of stateful components. 
+If we have, for example, ten components that need data from the state, we should create one container component that will keep the state for all of them.
+
+In this example, we will set the state for owner component (App). The Header component is just added like in the last example since it doesn't need any state. 
+Instead of content tag, we are creating table and tbody elements, where we will dynamically insert TableRow for every object from the data array.
+
+It can be seen that we are using EcmaScript 2015 arrow syntax (=>) which looks much cleaner than the old JavaScript syntax. 
+This will help us create our elements with fewer lines of code. It is especially useful when we need to create a list with a lot of items.
+
+import React from 'react';
+
+class App extends React.Component {
+   constructor() {
+      super();
+      this.state = {
+         data: 
+         [
+            {
+               "id":1,
+               "name":"Foo",
+               "age":"20"
+            },
+            {
+               "id":2,
+               "name":"Bar",
+               "age":"30"
+            },
+            {
+               "id":3,
+               "name":"Baz",
+               "age":"40"
+            }
+         ]
+      }
+   }
+   render() {
+      return (
+         <div>
+            <Header/>
+            <table>
+               <tbody>
+                  {this.state.data.map((person, i) => <TableRow key = {i} 
+                     data = {person} />)}
+               </tbody>
+            </table>
+         </div>
+      );
+   }
+}
+class Header extends React.Component {
+   render() {
+      return (
+         <div>
+            <h1>Header</h1>
+         </div>
+      );
+   }
+}
+class TableRow extends React.Component {
+   render() {
+      return (
+         <tr>
+            <td>{this.props.data.id}</td>
+            <td>{this.props.data.name}</td>
+            <td>{this.props.data.age}</td>
+         </tr>
+      );
+   }
+}
+export default App;
+
+Note − Notice that we are using key = {i} inside map() function. This will help React to update only the necessary elements instead of re-rendering the entire list 
+when something changes. It is a huge performance boost for larger number of dynamically created elements.
+
+The main difference between state and props is that props are immutable. This is why the container component should define the state that can be updated and changed, 
+while the child components should only pass data from the state using props.
+
+Default Props
+You can also set default property values directly on the component constructor instead of adding it to the reactDom.render() element.
+
+App.jsx
+import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         <div>
+            <h1>{this.props.headerProp}</h1>
+            <h2>{this.props.contentProp}</h2>
+         </div>
+      );
+   }
+}
+App.defaultProps = {
+   headerProp: "Header from props...",
+   contentProp:"Content from props..."
+}
+export default App;
+
+We are setting the state in our parent component and passing it down the component tree using props. Inside the render function, 
+we are setting headerProp and contentProp used in child components.
+
+Properties validation is a useful way to force the correct usage of the components. This will help during development to avoid future bugs and problems, once the app becomes larger. It also makes the code more readable, since we can see how each component should be used.
+
+Validating Props
+In this example, we are creating App component with all the props that we need. App.propTypes is used for props validation. If some of the props aren't using the correct type that we assigned, we will get a console warning. 
+After we specify validation patterns, we will set App.defaultProps.
+
+React component API. 
+-------------------
+setState(), forceUpdate and ReactDOM.findDOMNode(). 
+In new ES6 classes, we have to manually bind this. We will use this.method.bind(this) in the examples.
+
+setState() method is used to update the state of the component. This method will not replace the state, but only add changes to the original state.
+Force Update - Sometimes we might want to update the component manually. This can be achieved using the forceUpdate() method.
+Find Dom Node - For DOM manipulation, we can use ReactDOM.findDOMNode() method. First we need to import react-dom.
+
+import React from 'react';
+
+class App extends React.Component {
+   constructor() {
+      super();
+		
+      this.state = {
+         data: []
+      }
+	
+      this.setStateHandler = this.setStateHandler.bind(this);
+	  this.forceUpdateHandler = this.forceUpdateHandler.bind(this);
+	  this.findDomNodeHandler = this.findDomNodeHandler.bind(this);
+   };
+   setStateHandler() {
+      var item = "setState..."
+      var myArray = this.state.data.slice();
+	  myArray.push(item);
+      this.setState({data: myArray})
+   };
+   findDomNodeHandler() {
+      var myDiv = document.getElementById('myDiv');
+      ReactDOM.findDOMNode(myDiv).style.color = 'green';
+   };
+   forceUpdateHandler() {
+      this.forceUpdate();
+   };
+   render() {
+      return (
+         <div>
+            <button onClick = {this.setStateHandler}>SET STATE</button>
+			<button onClick = {this.forceUpdateHandler}>FORCE UPDATE</button>            
+			<button onClick = {this.findDomNodeHandler}>FIND DOME NODE</button>
+            <h4>State Array: {this.state.data}</h4>
+			<h4>Random number: {Math.random()}</h4>
+			<div id = "myDiv">NODE</div>
+         </div>
+      );
+   }
+}
+export default App;
+
+ReactDOM.render(<App/>, document.getElementById('app'));
+setTimeout(() => {
+   ReactDOM.unmountComponentAtNode(document.getElementById('app'));}, 10000);
+   
+React Forms
+-----------
+
+We are using onChange event that will watch the input changes and update the state accordingly.
+When the input text value changes, the state will be updated.
+
+we will see how to use forms from child component. onChange method will trigger state update that will be passed to the child input value and rendered 
+on the screen. A similar example is used in the Events chapter. Whenever we need to update state from child component, we need to pass the function that 
+will handle updating (updateState) as a prop (updateStateProp).
+
+App.jsx
+import React from 'react';
+
+class App extends React.Component {
+   constructor(props) {
+      super(props);
+      
+      this.state = {
+         data: 'Initial data...'
+      }
+      this.updateState = this.updateState.bind(this);
+   };
+   updateState(e) {
+      this.setState({data: e.target.value});
+   }
+   render() {
+      return (
+         <div>
+            <Content myDataProp = {this.state.data} 
+               updateStateProp = {this.updateState}></Content>
+         </div>
+      );
+   }
+}
+class Content extends React.Component {
+   render() {
+      return (
+         <div>
+            <input type = "text" value = {this.props.myDataProp} 
+               onChange = {this.props.updateStateProp} />
+            <h3>{this.props.myDataProp}</h3>
+         </div>
+      );
+   }
+}
+export default App;
+main.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(<App/>, document.getElementById('app'));
+
+React Events
+------------
+
+When we need to update the state of the parent component from its child, we can create an event handler (updateState) in the parent component and 
+pass it as a prop (updateStateProp) to the child component where we can just call it.
+
+React - Refs
+------------
+
+The ref is used to return a reference to the element. Refs should be avoided in most cases, however, 
+they can be useful when we need DOM measurements or to add methods to the components.
+
+The following example shows how to use refs to clear the input field. ClearInput function searches for element with ref = "myInput" value, resets the state, and adds focus to it after the button is clicked.
+
+App.jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+class App extends React.Component {
+   constructor(props) {
+      super(props);
+		
+      this.state = {
+         data: ''
+      }
+      this.updateState = this.updateState.bind(this);
+      this.clearInput = this.clearInput.bind(this);
+   };
+   updateState(e) {
+      this.setState({data: e.target.value});
+   }
+   clearInput() {
+      this.setState({data: ''});
+      ReactDOM.findDOMNode(this.refs.myInput).focus();
+   }
+   render() {
+      return (
+         <div>
+            <input value = {this.state.data} onChange = {this.updateState} 
+               ref = "myInput"></input>
+            <button onClick = {this.clearInput}>CLEAR</button>
+            <h4>{this.state.data}</h4>
+         </div>
+      );
+   }
+}
+export default App;
+main.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(<App/>, document.getElementById('app'));
+Once the button is clicked, the input will be cleared and focused.
+
+React Keys
+----------
+
+React keys are useful when working with dynamically created components or when your lists are altered by the users. Setting the key value will keep your 
+components uniquely identified after the change.
+
+Let's dynamically create Content elements with unique index (i). The map function will create three elements from our data array. Since the key value 
+needs to be unique for every element, we will assign i as a key for each created element.
+
+import React from 'react';
+
+class App extends React.Component {
+   constructor() {
+      super();
+		
+      this.state = {
+         data:[
+            {
+               component: 'First...',
+               id: 1
+            },
+            {
+               component: 'Second...',
+               id: 2
+            },
+            {
+               component: 'Third...',
+               id: 3
+            }
+         ]
+      }
+   }
+   render() {
+      return (
+         <div>
+            <div>
+               {this.state.data.map((dynamicComponent, i) => <Content 
+                  key = {i} componentData = {dynamicComponent}/>)}
+            </div>
+         </div>
+      );
+   }
+}
+class Content extends React.Component {
+   render() {
+      return (
+         <div>
+            <div>{this.props.componentData.component}</div>
+            <div>{this.props.componentData.id}</div>
+         </div>
+      );
+   }
+}
+export default App;
+main.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(<App/>, document.getElementById('app'));
+We will get the following result for the Key values of each element.
+
+React Keys Example
+If we add or remove some elements in the future or change the order of the dynamically created elements, 
+React will use the key values to keep track of each element.
+
+React Router
+------------
+
+In this step, we will create four components. The App component will be used as a tab menu. 
+The other three components (Home), (About) and (Contact) are rendered once the route has changed.
+
+main.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Router, Route, Link, browserHistory, IndexRoute } from 'react-router'
+
+class App extends React.Component {
+   render() {
+      return (
+         <div>
+            <ul>
+            <li>Home</li>
+            <li>About</li>
+            <li>Contact</li>
+            </ul>
+            {this.props.children}
+         </div>
+      )
+   }
+}
+export default App;
+
+class Home extends React.Component {
+   render() {
+      return (
+         <div>
+            <h1>Home...</h1>
+         </div>
+      )
+   }
+}
+export default Home;
+
+class About extends React.Component {
+   render() {
+      return (
+         <div>
+            <h1>About...</h1>
+         </div>
+      )
+   }
+}
+export default About;
+
+class Contact extends React.Component {
+   render() {
+      return (
+         <div>
+            <h1>Contact...</h1>
+         </div>
+      )
+   }
+}
+export default Contact;
+
+Add a Router. Now, we will add routes to the app. Instead of rendering App element like in the previous example, this time the Router will be rendered. We will also set components for each route.
+
+main.js
+ReactDOM.render((
+   <Router history = {browserHistory}>
+      <Route path = "/" component = {App}>
+         <IndexRoute component = {Home} />
+         <Route path = "home" component = {Home} />
+         <Route path = "about" component = {About} />
+         <Route path = "contact" component = {Contact} />
+      </Route>
+   </Router>
+), document.getElementById('app'))
+When the app is started, we will see three clickable links that can be used to change the route.
+
+ReactJS - Flux Concept
+----------------------
+Flux is a programming concept, where the data is uni-directional. This data enters the app and flows through it in one direction until it is rendered on the screen.
+
+Flux Elements
+Actions − Actions are sent to the dispatcher to trigger the data flow.
+Dispatcher − This is a central hub of the app. All the data is dispatched and sent to the stores.
+Store − Store is the place where the application state and logic are held. Every store is maintaining a particular state and it will update when needed.
+View − The view will receive data from the store and re-render the app.
+
+Flux Pros
+Single directional data flow is easy to understand.
+The app is easier to maintain.
+The app parts are decoupled.
+
+ReactJS - Flux
+--------------
+
+Actions are JavaScript objects that use type property to inform about the data that should be sent to the store. We are defining ADD_TODO action that will be used for adding new item to our list. The addTodo function is an action creator that returns our action and sets an id for every created item.
+
+actions/actions.js
+export const ADD_TODO = 'ADD_TODO'
+
+let nextTodoId = 0;
+
+export function addTodo(text) {
+   return {
+      type: ADD_TODO,
+      id: nextTodoId++,
+      text
+   };
+}
+
+Reducers
+While actions only trigger changes in the app, the reducers specify those changes. We are using switch statement to search for a ADD_TODO action. 
+The reducer is a function that takes two parameters (state and action) to calculate and return an updated state.
+
+The first function will be used to create a new item, while the second one will push that item to the list. Towards the end, we are using 
+combineReducers helper function where we can add any new reducers we might use in the future.
+
+reducers/reducers.js
+import { combineReducers } from 'redux'
+import { ADD_TODO } from '../actions/actions'
+
+function todo(state, action) {
+   switch (action.type) {
+      case ADD_TODO:
+         return {
+            id: action.id,
+            text: action.text,
+         }
+      default:
+         return state
+   }
+}
+function todos(state = [], action) {
+   switch (action.type) {
+      case ADD_TODO:
+         return [
+            ...state,
+            todo(undefined, action)
+         ]
+      default:
+         return state
+   }
+}
+const todoApp = combineReducers({
+   todos
+})
+export default todoApp
+
+The store is a place that holds the app's state. It is very easy to create a store once you have reducers. We are passing store property to the provider element,
+which wraps our route component.
+
+main.js
+import React from 'react'
+
+import { render } from 'react-dom'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+
+import App from './App.jsx'
+import todoApp from './reducers/reducers'
+
+let store = createStore(todoApp)
+let rootElement = document.getElementById('app')
+
+render(
+   <Provider store = {store}>
+      <App />
+   </Provider>,
+	
+   rootElement
+)
+
+The App component is the root component of the app. Only the root component should be aware of a redux. The important part to notice is the connect 
+function which is used for connecting our root component App to the store.
+This function takes select function as an argument. Select function takes the state from the store and returns the props (visibleTodos) that we can 
+use in our components.
+
+App.jsx
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { addTodo } from './actions/actions'
+
+import AddTodo from './components/AddTodo.js'
+import TodoList from './components/TodoList.js'
+
+class App extends Component {
+   render() {
+      const { dispatch, visibleTodos } = this.props
+      
+      return (
+         <div>
+            <AddTodo onAddClick = {text =>dispatch(addTodo(text))} />
+            <TodoList todos = {visibleTodos}/>
+         </div>
+      )
+   }
+}
+function select(state) {
+   return {
+      visibleTodos: state.todos
+   }
+}
+export default connect(select)(App);
+Step 7 - Other Components
+These components shouldn't be aware of redux.
+
+components/AddTodo.js
+import React, { Component, PropTypes } from 'react'
+
+export default class AddTodo extends Component {
+   render() {
+      return (
+         <div>
+            <input type = 'text' ref = 'input' />
+				
+            <button onClick = {(e) => this.handleClick(e)}>
+               Add
+            </button>
+         </div>
+      )
+   }
+   handleClick(e) {
+      const node = this.refs.input
+      const text = node.value.trim()
+      this.props.onAddClick(text)
+      node.value = ''
+   }
+}
+components/Todo.js
+import React, { Component, PropTypes } from 'react'
+
+export default class Todo extends Component {
+   render() {
+      return (
+         <li>
+            {this.props.text}
+         </li>
+      )
+   }
+}
+components/TodoList.js
+import React, { Component, PropTypes } from 'react'
+import Todo from './Todo.js'
+
+export default class TodoList extends Component {
+   render() {
+      return (
+         <ul>
+            {this.props.todos.map(todo =>
+               <Todo
+                  key = {todo.id}
+                  {...todo}
+               />
+            )}
+         </ul>
+      )
+   }
+}
+
+ReactJS - Animations
+--------------------
+
+react-addons-css-transition-group
+
+The ReactCSSTransitionGroup element will be used as a wrapper of the component we want to animate. It will use transitionAppear and transitionAppearTimeout, while transitionEnter and transitionLeave are false.
+
+App.jsx
+import React from 'react';
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+
+class App extends React.Component {
+   render() {
+      return (
+         <div>
+            <ReactCSSTransitionGroup transitionName = "example"
+               transitionAppear = {true} transitionAppearTimeout = {500}
+               transitionEnter = {false} transitionLeave = {false}>
+					
+               <h1>My Element...</h1>
+            </ReactCSSTransitionGroup>
+         </div>      
+      );
+   }
+}
+export default App;
+
+ReactJS - Higher Order Components
+---------------------------------
+
+Higher order components are JavaScript functions used for adding additional functionalities to the existing component. These functions are pure, which means 
+they are receiving data and returning values according to that data. If the data changes, higher order functions are re-run with different data input. 
+If we want to update our returning component, we don't have to change the HOC. All we need to do is change the data that our function is using.
+
+Higher Order Component (HOC) is wrapping around "normal" component and provide additional data input. It is actually a function that takes one component 
+and returns another component that wraps the original one.
+
+The MyHOC is a higher order function that is used only to pass data to MyComponent. This function takes MyComponent, enhances it with newData and 
+returns the enhanced component that will be rendered on the screen.
+
+import React from 'react';
+
+var newData = {
+   data: 'Data from HOC...',
+}
+var MyHOC = ComposedComponent => class extends React.Component {
+   componentDidMount() {
+      this.setState({
+         data: newData.data
+      });
+   }
+   render() {
+      return <ComposedComponent {...this.props} {...this.state} />;
+   }
+};
+class MyComponent extends React.Component {
+   render() {
+      return (
+         <div>
+            <h1>{this.props.data}</h1>
+         </div>
+      )
+   }
+}
+
+export default MyHOC(MyComponent);
+
+Note − Higher order components can be used for different functionalities. These pure functions are the essence of functional programming. 
+Once you are used to it, you will notice how your app is becoming easier to maintain or to upgrade.
+
+React - Best Practices
+----------------------
+
+State − The state should be avoided as much as possible. It is a good practice to centralize the state and pass it down the component tree as props. 
+Whenever we have a group of components that need the same data, we should set a container element around them that will hold the state. 
+Flux pattern is a nice way of handling the state in React apps.
+
+PropTypes − The PropTypes should always be defined. This will help is track all props in the app and it will also be useful for any developer 
+working on the same project.
+
+Render − Most of the app's logic should be moved inside the render method. We should try to minimize logic in component lifecycle methods and 
+move that logic in the render method. The less state and props we use, the cleaner the code will be. We should always make the state as simple as possible. 
+If we need to calculate something from the state or props, we can do it inside the render method.
+
+Composition − React team suggests to use a single responsibility principle. This means that one component should only be responsible for one functionality. 
+If some of the components have more than one functionality, we should refactor and create a new component for every functionality.
+
+Higher Order Components (HOC) − Former React versions offered mixins for handling reusable functionalities. Since mixins are now deprecated, 
+one of the solutions is to use HOC.
+
+React - Forms
+-------------
+
+Form it is a stateful component.
+
+A stateful component in React is a component carrying its own local state
+A stateful component? “Valentino, we’re talking about Redux for managing the state! Why on earth would you give Form its own local state??”
+Even when using Redux it is totally fine to have stateful components.
+Not every piece of the application’s state should go inside Redux.
+
+In this example I don’t want any other component to be aware of the Form local state.
+
+What does the component do?
+The component contains some logic for updating the local state upon a form submission.
+Plus it receives a Redux action as prop. This way it can update the global state by dispatching the addArticle action.
+
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import uuidv1 from "uuid";
+import { addArticle } from "../actions/index";
+const mapDispatchToProps = dispatch => {
+  return {
+    addArticle: article => dispatch(addArticle(article))
+  };
+};
+class ConnectedForm extends Component {
+  constructor() {
+    super();
+    this.state = {
+      title: ""
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleChange(event) {
+    this.setState({ [event.target.id]: event.target.value });
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    const { title } = this.state;
+    const id = uuidv1();
+    this.props.addArticle({ title, id });
+    this.setState({ title: "" });
+  }
+  render() {
+    const { title } = this.state;
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="title">Title</label>
+          <input
+            type="text"
+            className="form-control"
+            id="title"
+            value={title}
+            onChange={this.handleChange}
+          />
+        </div>
+        <button type="submit" className="btn btn-success btn-lg">
+          SAVE
+        </button>
+      </form>
+    );
+  }
+}
+const Form = connect(null, mapDispatchToProps)(ConnectedForm);
+export default Form;
+
+Besides mapDispatchToProps and connect it’s standard React stuff.
+mapDispatchToProps connects Redux actions to React props. This way a connected component is able to dispatch actions.

@@ -1,0 +1,209 @@
+The store orchestrates all the moving parts in Redux.
+
+The store in Redux is like the human brain: it’s kind of magic.
+
+The Redux store is fundamental: the state of the whole application lives inside the store.
+So to start playing with Redux we should create a store for wrapping up the state.
+
+// src/js/store/index.js
+import { createStore } from "redux";
+import rootReducer from "../reducers/index";
+const store = createStore(rootReducer);
+export default store;
+createStore is the function for creating the Redux store.
+
+createStore takes a reducer as the first argument, rootReducer in our case.
+
+You may also pass an initial state to createStore. But most of the times you don’t have to. 
+Passing an initial state is useful for server side rendering. Anyway, the state comes from reducers.
+In Redux reducers produce the state. 
+
+A reducer is just a Javascript function. A reducer takes two parameters: the current state and an action (more about actions soon).
+The third principle of Redux says that the state is immutable and cannot change in place.
+This is why the reducer must be pure. A pure function is one that returns the exact same output for the given input.
+In plain React the local state changes in place with setState. In Redux you cannot do that.
+Creating a reducer is not that hard. It’s a plain Javascript function with two parameters.
+
+Redux reducers are without doubt the most important concept in Redux. Reducers produce the state of the application.
+
+But how does a reducer know when to produce the next state?
+The second principle of Redux says the only way to change the state is by sending a signal to the store.This signal is an action. 
+“Dispatching an action” is the process of sending out a signal.
+Now, how do you change an immutable state? You won’t. The resulting state is a copy of the current state plus the new data.
+
+That’s a lot to know.
+
+The reassuring thing is that Redux actions are nothing more than Javascript objects. This is what an action looks like:
+{
+  type: 'ADD_ARTICLE',
+  payload: { name: 'React Redux Tutorial', id: 1 }
+}
+Every action needs a type property for describing how the state should change.
+You can specify a payload as well. In the above example the payload is a new article. A reducer will add the article to the current state later.
+It is a best pratice to wrap every action within a function. Such function is an action creator.
+Let’s put everything together by creating a simple Redux action.
+
+Create a directory for the actions:
+
+mkdir -p src/js/actions
+Then create a new file named index.jsin src/js/actions:
+
+// src/js/actions/index.js
+export const addArticle = article => ({ type: "ADD_ARTICLE", payload: article });
+So, the type property is nothing more than a string.
+
+The reducer will use that string to determine how to calculate the next state.
+Since strings are prone to typos and duplicates it’s better to have action types declared as constants.
+This approach helps avoiding errors that will be difficult to debug.
+
+Then create a new file named action-types.jsinto the src/js/constants:
+
+// src/js/constants/action-types.js
+export const ADD_ARTICLE = "ADD_ARTICLE";
+Now open up again src/js/actions/index.jsand update the action to use action types:
+
+// src/js/actions/index.js
+import { ADD_ARTICLE } from "../constants/action-types";
+export const addArticle = article => ({ type: ADD_ARTICLE, payload: article });
+
+let’s recap the main Redux concepts:
+
+the Redux store is like a brain: it’s in charge for orchestrating all the moving parts in Redux
+the state of the application lives as a single, immutable object within the store
+as soon as the store receives an action it triggers a reducer
+the reducer returns the next state
+
+What’s a Redux reducer made of?
+
+A reducer is a Javascript function taking two parameters: the state and the action.
+A reducer function has a switch statement (although unwieldy, a naive reducer could also use if/else).
+The reducer calculates the next state depending on the action type. Moreover, it should return at least the initial state when no action type matches.
+When the action type matches a case clause the reducer calculates the next state and returns a new object. Here’s an excerpt of the code:
+
+import { ADD_ARTICLE } from "../constants/action-types";
+const initialState = {
+  articles: []
+};
+const rootReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case ADD_ARTICLE:
+      return { ...state, articles: state.articles.concat(action.payload) };
+    default:
+      return state;
+  }
+};
+export default rootReducer;
+
+import { ADD_ARTICLE } from "../constants/action-types";
+const initialState = {
+  articles: []
+};
+const rootReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case ADD_ARTICLE:
+      return { ...state, articles: [...state.articles, action.payload] };
+    default:
+      return state;
+  }
+};
+export default rootReducer;
+
+There are two key points for avoiding mutations in Redux:
+
+Using concat(), slice(), and …spread for arrays
+Using Object.assign() and …spread for objects
+
+Redux protip: the reducer will grow as your app will become bigger. You can split a big reducer into separate functions and combine them with combineReducers
+
+Redux - Store Methods
+---------------------
+Redux itself is a small library (2KB). The Redux store exposes a simple API for managing the state. The most important methods are:
+
+getState for accessing the current state of the application
+dispatch for dispatching an action
+subscribe for listening on state changes
+
+React Redux
+-----------
+react-redux is a Redux binding for React. It’s a small library for connecting Redux and React in an efficient way.
+
+The most important method you’ll work with is connect
+
+What does react-redux’s connect do? Unsurprisingly it connects a React component with the Redux store.
+You will use connect with two or three arguments depending on the use case. The fundamental things to know are:
+
+the mapStateToProps function
+the mapDispatchToProps function
+
+What does mapStateToProps do in react-redux? mapStateToProps does exactly what its name suggests: it connects a part of the Redux state to the props 
+of a React component. By doing so a connected React component will have access to the exact part of the store it needs.
+
+What does mapDispatchToProps do in react-redux? mapDispatchToProps does something similar, but for actions. mapDispatchToProps connects Redux actions 
+to React props. This way a connected React component will be able to dispatch actions.
+
+To start off connecting Redux with React we’re going to use Provider.
+
+Provider is an high order component coming from react-redux.
+Using layman’s terms, Provider wraps up your React application and makes it aware of the entire Redux’s store.
+Why so? We saw that in Redux the store manages everything. React must talk to the store for accessing the state and dispatching actions.
+
+import React from "react";
+import { render } from "react-dom";
+import { Provider } from "react-redux";
+import store from "./store/index";
+import App from "./components/App";
+render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("app")
+);
+
+Provider wraps up your entire React application. Moreover it gets the store as a prop.
+
+The key for connecting a React component with Redux is connect.
+
+Connect takes at least one argument.
+Since we want List to get a list of articles it’s a matter of connecting state.articleswith the component. How? With mapStateToProps.
+
+Create a new file named List.jsinside src/js/components. It should look like the following:
+// src/js/components/List.js
+import React from "react";
+import { connect } from "react-redux";
+const mapStateToProps = state => {
+  return { articles: state.articles };
+};
+const ConnectedList = ({ articles }) => (
+  <ul className="list-group list-group-flush">
+    {articles.map(el => (
+      <li className="list-group-item" key={el.id}>
+        {el.title}
+      </li>
+    ))}
+  </ul>
+);
+const List = connect(mapStateToProps)(ConnectedList);
+export default List;
+The List component receives the prop articleswhich is a copy of the articlesarray. Such array lives inside the Redux state we created earlier. It comes from the reducer:
+
+const initialState = {
+  articles: []
+};
+const rootReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case ADD_ARTICLE:
+      return { ...state, articles: [...state.articles, action.payload] };
+    default:
+      return state;
+  }
+};
+Then it’s a matter of using the prop inside JSX for generating a list of articles:
+
+{articles.map(el => (
+  <li className="list-group-item" key={el.id}>
+    {el.title}
+  </li>
+))}
+React protip: take the habit of validating props with PropTypes
+Finally the component gets exported as List. List is the result of connecting the stateless component ConnectedList with the Redux store.
+A stateless component does not have its own local state. Data gets passed to it as props
