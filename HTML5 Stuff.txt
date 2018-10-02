@@ -25,16 +25,16 @@ HTML5 added several new input types:
 
 color
 date
+time
 datetime-local
-email
 month
+week
+email
+tel
 number
 range
 search
-tel
-time
 url
-week
 
 HTML5 Web Workers
 -----------------
@@ -146,7 +146,7 @@ function stopWorker() {
 </html>
 
 Web Workers and the DOM
-Since web workers are in external files, they do not have access to the following JavaScript objects:
+Since web workers are in external files, they do not have acce ss to the following JavaScript objects:
 
 The window object
 The document object
