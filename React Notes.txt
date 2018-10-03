@@ -1,5 +1,36 @@
 ReactJS is JavaScript library used for building reusable UI components. 
 
+Stateful Components (Components as Class) and Stateless Components (Components as Functions) 
+
+Stateful Component	
+------------------
+1. Stores info about component’s state change in memory
+2. Have authority to change state
+3. Contains the knowledge of past, current and possible future changes in state	
+4. Stateless components notify them about the requirement of the state change, then they send down the props to them.
+
+Stateless Component
+-------------------
+
+1. Calculates the internal state of the components
+2. Do not have the authority to change state
+3. Contains no knowledge of past, current and possible future state changes
+4. They receive the props from the Stateful components and treat them as callback functions.
+
+Controlled Components	
+---------------------
+1. They do not maintain their own state	
+2. Data is controlled by the parent component
+3. They take in the current values through props and then notify the changes via callbacks	
+
+Uncontrolled Components
+-----------------------
+1. They maintain their own state
+2. Data is controlled by the DOM
+3. Refs are used to get their current values
+
+We need to bind each method that gets passed (as a prop or callback) because passing a method as a parameter will “detach” it from it’s context (this). 
+
 React Features
 --------------
 JSX − JSX is JavaScript syntax extension. It isn't necessary to use JSX in React development, but it is recommended.
