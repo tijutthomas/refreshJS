@@ -33,7 +33,7 @@ ECMA6 (June 2015)
 classes in javascript
 Arrow functions
 
-Promises 
+Promises
 
 async - Async keyword makes any function to return only promises.
 await - Await can be used only inside async function. It doesn’t work outside async function
